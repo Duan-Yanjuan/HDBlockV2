@@ -1,0 +1,237 @@
+/**
+ * HEBlock model file
+ */
+
+namespace org.acme.hdb
+
+// participants
+
+participant HDB identified by HDBId {
+    o String HDBId
+    o String address
+    o String officeNumber
+}
+
+participant ICA identified by ICAId {
+    o String ICAId
+    o String address
+    o String officeNumber
+}
+
+participant IRAS identified by IRASId {
+    o String IRASId
+    o String address
+    o String officeNumber
+}
+
+// HDBlock will be a participant actor on behalf of clients (tenants and landlords)
+participant HDBlock identified by HDBlockId {
+    o String HDBlockId
+    o String address
+    o String officeNumber
+    --> Tenant[] tenantList
+    --> Landlord[] landlordList
+}
+
+
+// Assets
+abstract asset Client identified by id {
+    o String id
+    o String email
+    o String firstName
+    o String lastName
+    o String ICStatus default = "Pending"  //PENDING, VALID, INVALID
+}
+
+asset Landlord extends Client {
+    --> House house optional
+}
+
+asset Tenant extends Client {
+    --> TenancyAgreement agreement optional // current active agreement
+}
+
+asset House identified by houseId {
+    o String houseId // format: Postal code + Unit
+    o String address
+    o String status default = "Pending" // pending, rented, available, invalid/banned
+    o String type // choose from a list of values
+    --> Landlord landlord
+    --> Tenant[] tenants optional
+}
+
+asset TenancyAgreement identified by agreementId {
+    o String agreementId // format: postal code + unitNo. + date created (e.g. 53070909108_01012018)
+    o DateTime dateCreated
+    o DateTime startDate //start rental date, check whether need this
+    o DateTime endDate optional //can delete
+    o Integer duration //number of days e.g. 180 days
+    o Double securityDeposit   // check what is this  can delete
+    o Double advanceRentalFee  // check whether need this   can delete
+    o Double rentalFee
+    o String status default = "Pending" // pending, signed, active, end, invalid
+    o Integer numOfTenants default = 0
+    o Boolean isStampDutyPaid default = false
+    --> StampCertificate stampCertificate optional
+    --> House house
+    --> TenancySignature[] signatureList optional
+ //     --> Tenant[] tenants
+}
+
+// New assets of tenancy signature will be created when landlord created and signed the tenancy agreement, or update tenants
+asset TenancySignature identified by signatureId {
+    o String signatureId
+    o Boolean isSigned default = false
+    --> Tenant tenant
+    --> TenancyAgreement agreement optional
+}
+
+asset StampCertificate identified by certificateId {
+    o String certificateId
+    o DateTime dateCreated
+    o Integer amount // integer or double?
+    --> TenancyAgreement agreement
+}
+
+/* Discuss further whether to include this */
+asset DepositRecord identified by recordId {
+    o String recordId
+    o String date
+    o Double amount
+    --> Landlord landlord
+    --> Tenant tenant
+    --> House house
+}
+
+// Transactions
+
+//!!! in report, should delete "wallet" attribute
+//status is default: PENDING
+transaction RegisterAsTenant {
+    o String id
+    o String email
+    o String firstName
+    o String lastName
+}
+
+//!!! in report, should delete "wallet" attribute
+//status is default: PENDING
+transaction RegisterAsLandlord {
+    o String id
+    o String email
+    o String firstName
+    o String lastName
+}
+  
+// check whether should use reference for havent-created asset (house) --> i think should not
+// try houseRegistry.create(house);
+transaction RegisterHouse {
+    o String houseId
+    o String address
+    o String type
+    --> Landlord landlord
+} 
+
+//!!! in report, ApproveTenantIdentity and ApproveLandlordIdentity have wrong arguments (need to swap)
+transaction ApproveTenantIdentity {
+    --> Tenant tenant
+}
+
+transaction ApproveLandlordIdentity {
+    --> Landlord landlord
+}
+
+transaction ApproveHouse {
+    --> House house
+}
+
+transaction UpdateTenantStatus {
+  o String status
+  --> Tenant tenant
+}
+
+transaction UpdateLandlordStatus {
+  o String status
+  --> Landlord landlord
+}
+  
+transaction UpdateHouseStatus {
+  o String status
+  --> House house
+}
+
+// a list of tenancy signatures will be created
+transaction CreateTenancyAgreement {
+    o String agreementId 
+    o DateTime startDate
+    o Integer duration
+    o Double securityDeposit   // check what is this
+    o Double advanceRentalFee  // check whether need this
+    o Double rentalFee
+    --> Tenant[] tenants
+    --> House house
+}
+  
+// signed by tenants
+transaction SignTenancyAgreement {
+    --> TenancySignature signature
+}
+
+  
+transaction UpdateTenancyAgreement {
+    -->TenancyAgreement agreement
+    --> Tenant[] tenants
+}
+  
+//!!! in report, change "landlord" argument into "tenant"
+transaction PayStampDuty {
+    o String certificateId
+    o Double amount
+    --> TenancyAgreement agreement
+}
+  
+  
+  
+  
+  
+// left to be done
+transaction ActivateTenancyAgreement {
+}
+  
+transaction AddNewTenant {
+    --> TenancySignature signature
+    --> House house
+    --> TenancyAgreement agreement
+}
+
+//!!! in report, should add "tenant" argument
+transaction PayDeposit {
+    o Double amount
+    --> Tenant tenant
+    --> Landlord landlord
+    --> House house
+}
+
+//!!! in report, change the transction name into "RenewTenancyAgreement"
+transaction RenewTenancyAgreement {
+    o Integer duration //number of days
+    o String start // start date of rent
+    o Double rental // rental fee 
+    --> TenancyAgreement oldAgreement
+}
+
+// read operation from world state, allowing tenants to retrive tenancy agreement
+transaction RetrieveTenancyAgreementByTenant {
+    --> Tenant tenant
+    --> TenancySignature signature
+}
+  
+transaction RetrieveTenancyAgreementByLandlord {
+    --> Landlord landlord
+    --> TenancyAgreement[] agreementList
+}
+  
+/*
+transaction GetAllPendingTenants {
+}
+*/

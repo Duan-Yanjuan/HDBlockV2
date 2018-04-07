@@ -1,0 +1,250 @@
+/**
+ * HDBlock access control file
+ * !!! please check all the resource in report
+ * ??? we should use asset as resouce or transaction as resource
+ */
+
+// HDBlock acts on behalf of Tenants and Landlords
+
+// access permission to resources
+rule HDBlockCanAccessEverything {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: READ, CREATE, UPDATE
+    resource: "org.acme.hdb.*"
+    action: ALLOW
+}
+
+rule ICACanAccessLandlord {
+    description: "ICA can read and update landlord"
+    participant: "org.acme.hdb.ICA"
+    operation: READ, UPDATE
+    resource: "org.acme.hdb.Landlord"
+    action: ALLOW
+}
+
+rule ICACanAccessTenant {
+    description: "ICA can read and update tenant"
+    participant: "org.acme.hdb.ICA"
+    operation: READ, UPDATE
+    resource: "org.acme.hdb.Tenant"
+    action: ALLOW
+}
+
+rule HDBCanAccessHouse {
+    description: "HDB can read and update house"
+    participant: "org.acme.hdb.HDB"
+    operation: READ, UPDATE, CREATE
+    resource: "org.acme.hdb.House"
+    action: ALLOW
+}
+
+// double check
+rule HDBCanReadTenancyAgreement {
+    description: "Only HDB can read tenancy agreement"
+    participant: "org.acme.hdb.HDB"
+    operation: READ
+    resource: "org.acme.hdb.TenancyAgreement"
+    action: ALLOW
+}
+//end of access permission
+
+
+
+// issue transaction 
+rule RegisterAsTenant {
+    description: "Only HDBlock can register as tenant"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.RegisterAsTenant"
+    action: ALLOW
+}
+
+rule ApproveIdentityForTenant {
+    description: "Only ICA can approve identity for tenant"
+    participant: "org.acme.hdb.ICA"
+    operation: CREATE
+    resource: "org.acme.hdb.ApproveTenantIdentity"
+    action: ALLOW
+}
+
+rule RegisterAsLandlord {
+    description: "Only HDBlock can register as landlord"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.RegisterAsLandlord"
+    action: ALLOW
+}
+
+rule ApproveIdentityForLandlord {
+    description: "Only ICA can approve identity for landlord"
+    participant: "org.acme.hdb.ICA"
+    operation: CREATE
+    resource: "org.acme.hdb.ApproveLandlordIdentity"
+    action: ALLOW
+}
+
+rule RegisterHouse {
+    description: "Only HDBlock can register a house"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.RegisterHouse"
+    action: ALLOW
+}
+
+rule ApproveHouse {
+    description: "Only HDB can approve house"
+    participant: "org.acme.hdb.HDB"
+    operation: CREATE
+    resource: "org.acme.hdb.ApproveHouse"
+    action: ALLOW
+}
+
+rule UpdateTenantStatus {
+    description: "Only ICA can update tenant status"
+    participant: "org.acme.hdb.ICA"
+    operation: CREATE
+    resource: "org.acme.hdb.UpdateTenantStatus"
+    action: ALLOW
+}
+
+rule UpdateLandlordStatus {
+    description: "Only ICA can update landlord status"
+    participant: "org.acme.hdb.ICA"
+    operation: CREATE
+    resource: "org.acme.hdb.UpdateLandlordStatus"
+    action: ALLOW
+}
+
+rule UpdateHouseStatus {
+    description: "Only HDB can update house status"
+    participant: "org.acme.hdb.HDB"
+    operation: CREATE
+    resource: "org.acme.hdb.UpdateHouseStatus"
+    action: ALLOW
+}
+
+rule CreteTenancyAgreement {
+    description: "Only HDBlock can create tenancy agreement"
+    participant(p): "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource(r): "org.acme.hdb.CreateTenancyAgreement"
+    condition: (r.house.landlord.ICStatus == 'Valid')
+    action: ALLOW
+}
+
+rule SignTenancyAgreement {
+    description: "Only HDBlock can sign tenancy agreement"
+    participant(p): "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource(r): "org.acme.hdb.SignTenancyAgreement"
+    condition: (r.signature.tenant.ICStatus == "Valid")
+    action: ALLOW
+}
+
+rule UpdateTenancyAgreement {
+    description: "Only HDBlock can update tenancy agreement"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.SignTenancyAgreement"
+    action: ALLOW
+}
+
+rule PayStampDuty {
+    description: "Only HDBlock can pay stamp duty"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource(r): "org.acme.hdb.PayStampDuty"
+    condition: (r.agreement.status == 'Signed')
+    action: ALLOW
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+rule AnyoneCanReadLandlords {
+  description: "Anyone can read a marble" 
+  participant(p): "org.acme.hdb.*" 
+  operation: READ
+  resource(r): "org.acme.hdb.Landlord" 
+  condition: (true)
+  action: ALLOW
+}
+
+rule OnlyHDBCanApproveHouse {
+    description: "Only HDB can approve house"
+    participant: "org.acme.hdb.HDB"
+    operation: UPDATE
+    resource: "org.acme.hdb.ApproveHouse"
+    action: ALLOW
+}
+
+
+//!!! in report, the condition should be tenant is valid and is associsted with the house
+rule OnlyTenantCanPayDeposit {
+    description: "Only tenant can pay deposit"
+    participant(p): "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource(r): "org.acme.hdb.PayDeposit"
+    condition: (p.status == "VALID" && r.tenant.getIdentifier() == p.getIdentifier())
+    action: ALLOW  
+}
+
+//!!! in report, change the name and description of this rule
+//!!! in report, the condition should be tenant is valid and is associsted with the house
+rule OnlyTenantCanPayDuty {
+    description: "Only tenant can pay duty"
+    participant(p): "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource(r): "org.acme.hdb.PayStampDuty"
+    condition: (p.status == "VALID" && r.tenant.getIdentifier() == p.getIdentifier())
+    action: ALLOW 
+}
+
+//!!! in report, the condition should be tenant is valid and is associsted with the house
+rule OnlyTenantCanRenew {
+    description: "Only tenant can renew"
+    participant(p): "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource(r): "org.acme.hdb.RenewTenancyAgreement"
+    condition: (p.status == "VALID" && r.tenant.getIdentifier() == p.getIdentifier())
+    action: ALLOW 
+}
+
+
+
+
+rule SystemACL {
+  description:  "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+

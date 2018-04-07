@@ -1,0 +1,13 @@
+query GetTenantsByStatus {
+    description: "Select tenants based on status"
+    statement:
+        SELECT org.acme.hdb.Tenant
+            WHERE (ICStatus == _$status)
+}
+
+query GetLandlordsByStatus {
+    description: "Select landlords based on status"
+    statement:
+        SELECT org.acme.hdb.Landlord
+            WHERE (ICStatus == _$status)
+}
