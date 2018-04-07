@@ -5,13 +5,23 @@
  */
 package ejb.session.stateless;
 
+import entity.HDBStaffEntity;
+import entity.HDBRentingPolicyEntity;
 import javax.ejb.Local;
+import java.util.List;
+import util.exception.InvalidLoginCredentialException;
+import util.exception.StaffNotFoundException;
 
 /**
  *
- * @author David
+ * @author Steph
  */
 @Local
 public interface HDBControllerLocal {
+    
+    public HDBStaffEntity retrieveUserByUsername(String username) throws StaffNotFoundException;
+    public HDBStaffEntity staffLogin(String username, String password) throws InvalidLoginCredentialException;
+    public HDBStaffEntity createNewStaff(HDBStaffEntity newStaff);
+    public List<HDBRentingPolicyEntity> retrieveHDBRentingPolicies();
     
 }

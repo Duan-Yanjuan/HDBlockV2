@@ -36,6 +36,7 @@ public class HDBRentingPolicyEntity implements Serializable {
     }
 
     public HDBRentingPolicyEntity(String policyCode, String flatType, String rentingType, int maxNumofTenantsAllowed) {
+        this();
         this.policyCode = policyCode;
         this.flatType = flatType;
         this.rentingType = rentingType;

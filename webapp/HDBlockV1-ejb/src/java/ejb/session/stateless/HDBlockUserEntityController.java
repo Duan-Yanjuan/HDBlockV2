@@ -52,9 +52,9 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
 
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
-    private final String COMPOSER_URL = "http://172.25.105.61:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
-    private final String TENANT_ASSET_ORG = "org.acme.hdb.Tenant";
-    private final String LANDLORD_ASSET_ORG = "org.acme.hdb.Landlord";
+    private final String COMPOSER_URL = "http://172.25.106.191:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String TENANT_ASSET_ORG = "org.acme.hdb.RegisterAsTenant";
+    private final String LANDLORD_ASSET_ORG = "org.acme.hdb.RegisterAsLandlord";
     private final String TENANCY_AGREEMENT_ASSET_ORG = "org.acme.hdb.TenancyAgreement";
     private final String TENANCY_SIGNATURE_ASSET_ORG = "org.acme.hdb.TenancySignature";
     private final String HOUSE_ASSET_ORG = "org.acme.hdb.House";
@@ -83,6 +83,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
             
      
             if (newUser.getUserType().equals("tenant")) {
+               System.out.println("*********** REGISTER Tenant RESPONSE IS ");
                //CALL COMPOSER REST SERVER TO CREATE NEW USER(TENANT).
                myResource = CLIENT.target(COMPOSER_URL).path(TENANT_ASSET_ORG);
                TenantAsset tenant = new TenantAsset(TENANT_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending");
@@ -94,6 +95,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                     
             }
             else if(newUser.getUserType().equals("landlord")){
+                System.out.println("*********** REGISTER Landlord RESPONSE IS ");
                //CALL COMPOSER REST SERVER TO CREATE NEW USER(lANDLORD).
                myResource = CLIENT.target(COMPOSER_URL).path(LANDLORD_ASSET_ORG);
                System.out.println("******** RESOURCES IS " + myResource.getUri());
@@ -105,8 +107,8 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
             }
             
             //COMPOSER REST MIGHT RETURN UNSUCCESFUL RESPONSE
-            if(responseStatus != 200)
-                   throw new CreateNewUserException("Fail to Register Account in Block Chain Network");
+           /* if(responseStatus != 200)
+                   throw new CreateNewUserException("Fail to Register Account in Block Chain Network");*/
                 
              return newUser;
         }
@@ -168,6 +170,14 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
             throw new UserNotFoundException("User email " + email + " does not exist!");
         }
 
+    }
+    
+    @Override
+    public List<HDBlockUserEntity> retrieveAllUser(){
+        
+        Query query = em.createQuery("SELECT u FROM HDBlockUserEntity u");
+        System.out.println("********** RETRIEVE USER " + query.getResultList().size());
+        return query.getResultList();
     }
 
     @Override
