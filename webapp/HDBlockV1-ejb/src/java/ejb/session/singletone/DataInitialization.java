@@ -49,8 +49,11 @@ public class DataInitialization {
 
         try {
 
-            initializeData();
-
+            if(hDBlockUserEntityControllerLocal.retrieveAllUser().isEmpty()){
+                
+                System.out.println("********** EMPTY");
+            initializeData();}
+            
         } catch (Exception ex) {
 
         }
