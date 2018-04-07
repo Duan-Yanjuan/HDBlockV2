@@ -44,6 +44,8 @@ public interface HDBlockUserEntityControllerLocal {
 
     public HDBHouseEntity registerHouse(HDBHouseEntity newHouse, String landlordEmail) throws UserNotFoundException, CreateNewHouseException;
 
+    public List<HDBlockUserEntity> retrieveAllUser();
+
  
 
 }

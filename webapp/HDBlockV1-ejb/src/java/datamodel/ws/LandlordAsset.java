@@ -21,7 +21,8 @@ import javax.xml.bind.annotation.XmlType;
     "email",
     "firstName",
     "lastName",
-    "ICStatus"
+    "ICStatus",
+    "dob"
 })
 public class LandlordAsset {
       private String $class;
