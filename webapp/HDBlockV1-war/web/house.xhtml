@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/userMasterPage.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+
+        <style>
+            .ui-datascroller-list{
+                
+                border : 1px !important;
+            }
+            
+            .ui-datalist-content
+            {
+                   
+                border : 1px !important;
+            }
+    
+            
+            .ui-datascroller .ui-datascroller-content{
+                
+                 border : 0 !important;
+                
+            }
+            
+        </style>
+
+        <h:form id="form">
+
+            <h3>House Renting</h3>
+            <p:tabView dynamic="true" cache="true" effect="fold">
+                <p:tab title="Register New House">
+
+                    <p:messages id="register_error_messages" closable="true"></p:messages>
+
+                    <h:panelGrid columns="2" cellpadding="10">
+
+                        <form id="registerHouseForm">
+                            <h:outputLabel value="" />
+                            <h:outputLabel for="houseType" value="House Type: " />
+                            <p:selectOneMenu required="true" id="houseType" requiredMessage="Please select house type" value="#{houseManagedBean.newHouse.flatType}" style="width:170px">
+                                <f:selectItem itemLabel="Select House Type" itemValue ="" />
+                                <f:selectItem itemLabel="1-room or 2-room flat" itemValue ="room1Flat" />
+                                <f:selectItem itemLabel="3-room flat " itemValue ="room3Flat" />
+                                <f:selectItem itemLabel="4-room or bigger flat " itemValue ="room4Flat" />
+                            </p:selectOneMenu>
+
+                            <h:outputLabel for="price" value="Rental Price($)/Month: " />
+                            <p:inputText id="price"  value="#{houseManagedBean.newHouse.rentalPrice}" label="Rental Price" required="true" requiredMessage="Please enter Rental Price."/>
+                            <h:outputLabel for="address" value="Address: " />
+                            <p:inputTextarea cols="23" id="address"   value="#{houseManagedBean.newHouse.address}" required="true" requiredMessage="Please enter your address"/>
+
+                            <h:outputLabel for="unit" value="Unit No: " />
+                            <p:inputText id="unit"  value="#{houseManagedBean.newHouse.unitNumber}" label="Unit" required="true" requiredMessage="Please enter your Unit No"/>
+
+
+                            <h:outputLabel for="postal" value="Postal Code: " />
+                            <p:inputText id="postal"  value="#{houseManagedBean.newHouse.postalCode}" label="Postal Code" required="true" requiredMessage="Please enter your Postal Code Number."/>
+
+
+                            <h:outputLabel for="image" value="Image: " />
+                            <p:fileUpload id="image" value="#{fileUploadView.file}" style="width: 250px" mode="simple" skinSimple="true"/>
+
+
+                            <p:commandButton value="Register" action="#{houseManagedBean.registerHouse}" style="width:205px;"  update="@form" icon="fa fa-arrow-circle-up" />
+                            <p:commandButton value="Reset" style="width:205px;"  update="@form" icon="fa fa-arrow-circle-up"/>
+                            <h:outputLabel value="" />
+                            <h:outputLabel value="" />
+                        </form> 
+                    </h:panelGrid>
+
+                </p:tab>
+                <p:tab title="View My House">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:form id="viewHouse"> 
+                            <p:dataScroller style="border: 0px !important;" value="#{houseManagedBean.houses}" var="landlordHouse" chunkSize="10" >
+
+                                <h:panelGrid columns="2" style="width:100%" cellpadding="25"  columnClasses="logo,detail">
+                                    <p:graphicImage name="/images/HDB.jpg" width="200px" height="200px" /> 
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                         
+
+                                            <h:outputText value="Address:" />
+                                            <h:outputText value="#{landlordHouse.address}" style="font-weight: bold"/>
+
+                                            <h:outputText value="Unit: " />
+                                            <h:outputText value="#{landlordHouse.unitNumber}" style="font-weight: bold"/>
+
+
+                                            <h:outputText value="Postal Code: " />
+                                            <h:outputText value="#{landlordHouse.postalCode}" style="font-weight: bold"/>
+
+
+                                            <h:outputText value="Flat Type" />
+                                            <h:outputText value="#{landlordHouse.flatType}" style="font-weight: bold"/>
+
+                                            <h:outputText value="Rental Fee($)/Month" />
+                                            <h:outputText value="#{landlordHouse.rentalPrice}" style="font-weight: bold"/>
+
+                                            <h:outputText value="Current Status" />
+                                            <h:outputText value="Occupied" style="font-weight: bold"/>
+                                            
+                                            <p:selectBooleanButton rendered="#{houseManagedBean.rentalStatus != 'occupied'}"  id="udpateButton" value="#{selectBooleanView.value2}" onLabel="edit" offLabel="Update" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px">
+                                                <p:ajax listener="#{selectBooleanView.addMessage}" />
+                                            </p:selectBooleanButton>
+
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+                                </h:panelGrid>
+                            </p:dataScroller>
+                        </h:form>
+                    </h:panelGrid>
+                </p:tab>
+
+            </p:tabView>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

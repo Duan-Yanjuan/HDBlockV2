@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/userMasterPage.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+       
+        <h:form id="browseHouseForm">
+            
+            <p:dataGrid var="house" value="#{exploreManagedBean.housesForBrowsing}" columns="3" layout="grid"
+        rows="12" paginator="true" id="cars"
+        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+        rowsPerPageTemplate="6,12,16">
+ 
+        <f:facet name="header">
+           House for Rent
+        </f:facet>
+ 
+         <p:panel header="#{house.address}" style="text-align:center">
+            <h:panelGrid columns="1" style="width:100%">
+                <p:graphicImage name="images/car/#{car.brand}.gif"/> 
+ 
+                <h:outputText value="Rental Price : $ #{house.rentalPrice}" />
+ 
+                <p:commandLink update=":browseHouseForm:houseDetail" oncomplete="PF('houseDialog').show()" title="View Detail">
+                    <h:outputText styleClass="ui-icon ui-icon-search" style="margin:0 auto;" />
+                    <f:setPropertyActionListener value="#{house}" target="#{exploreManagedBean.selectedHouse}" />
+                </p:commandLink>
+            </h:panelGrid>
+        </p:panel>
+ 
+    </p:dataGrid>
+ 
+            <p:dialog header="House Information" widgetVar="houseDialog" modal="true" closable="true"  appendTo="@(body)" showEffect="fade" hideEffect="fade" resizable="false" width="300px" height="300px"> 
+        <p:outputPanel id="houseDetail" style="text-align:center;">
+            <p:panelGrid  columns="2" rendered="#{not empty exploreManagedBean.selectedHouse}" columnClasses="label,value">
+                <f:facet name="header">
+                    <p:graphicImage name="demo/images/car/#{dataGridView.selectedCar.brand}-big.gif"/> 
+                </f:facet>
+ 
+                <h:outputText value="House Owner: " />
+                <h:outputText value="#{exploreManagedBean.selectedHouse.houseOwner.firstName} #{exploreManagedBean.selectedHouse.houseOwner.firstName}" />
+ 
+                <h:outputText value="Owner Contact: " />
+                <h:outputText value="#{exploreManagedBean.selectedHouse.houseOwner.phoneNo} " />
+ 
+                <h:outputText value="Rental Price($): " />
+                <h:outputText value="#{dataGridView.selectedCar.color}" style="color:#{exploreManagedBean.selectedHouse.rentalPrice}"/>
+ 
+                <h:outputText value="Full Address: " />
+                <h:outputText value="$#{exploreManagedBean.selectedHouse.address} #{exploreManagedBean.selectedHouse.unitNumber} S#{exploreManagedBean.selectedHouse.postalCode}" />
+                
+            </p:panelGrid>
+        </p:outputPanel>
+    </p:dialog>
+            
+            
+        </h:form>
+        
+        
+        
+    </ui:define>
+
+</ui:composition>
