@@ -1,19 +1,12 @@
-# Build and Release Folders
-bin/
-bin-debug/
-bin-release/
-[Oo]bj/ # FlashDevelop obj
-[Bb]in/ # FlashDevelop bin
+#Ignore Build , dist and nbProject/private folder
+webapp/build/
+webapp/dist/
+webapp/nbproject/private/
 
-# Other files and folders
-.settings/
+webapp/HDBlockV1-ejb/build/
+webapp/HDBlockV1-ejb/dist/
+webapp/HDBlockV1-ejb/nbproject/private/
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
-
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+webapp/HDBlockV1-war/build/
+webapp/HDBlockV1-war/dist/
+webapp/HDBlockV1-war/nbproject/private/
