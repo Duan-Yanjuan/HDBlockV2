@@ -14,6 +14,7 @@ function registerAsTenant(tenant) {
     newTenant.email = tenant.email;
     newTenant.firstName = tenant.firstName;
     newTenant.lastName = tenant.lastName;
+    newTenant.DOB = tenant.DOB;
     return tenantRegistry.add(newTenant);
   });
 }
@@ -32,6 +33,7 @@ function registerAsLandlord(landlord) {
     newLandlord.email = landlord.email;
     newLandlord.firstName = landlord.firstName;
     newLandlord.lastName = landlord.lastName;
+    newLandlord.DOB = landlord.DOB;
     return landlordRegistry.add(newLandlord);
   });
 }
@@ -168,6 +170,7 @@ function createTenancyAgreement(args) {
     newAgreement.advanceRentalFee = args.advanceRentalFee;
     newAgreement.rentalFee = args.rentalFee;
     newAgreement.house = args.house;
+    newAgreement.landlord = args.house.landlord;
     newAgreement.numOfTenants = args.tenants.length;
     console.log('add agreement');
     console.log(newAgreement);
