@@ -7,11 +7,14 @@ package ejb.session.stateless;
 
 import datamodel.ws.LandlordAsset;
 import datamodel.ws.Product;
+import datamodel.ws.TenancyAgreementAsset;
 import datamodel.ws.TenantAsset;
 import entity.HDBHouseEntity;
 import entity.HDBlockUserEntity;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +41,7 @@ import util.exception.CreateNewHouseException;
 import util.exception.CreateNewUserException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UserNotFoundException;
+import util.helperclass.PendingUser;
 import util.helperclass.ProductEntity;
 import util.helperclass.TenancyAgreement;
 import util.helperclass.Tenant;
@@ -52,13 +56,17 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
 
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
-    private final String COMPOSER_URL = "http://172.25.106.191:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://192.168.1.78:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String TENANT_ASSET_ORG = "org.acme.hdb.RegisterAsTenant";
     private final String LANDLORD_ASSET_ORG = "org.acme.hdb.RegisterAsLandlord";
-    private final String TENANCY_AGREEMENT_ASSET_ORG = "org.acme.hdb.TenancyAgreement";
+    private final String CREATE_TENANCY_AGREEMENT_ASSET_ORG = "org.acme.hdb.CreateTenancyAgreement";
     private final String TENANCY_SIGNATURE_ASSET_ORG = "org.acme.hdb.TenancySignature";
     private final String HOUSE_ASSET_ORG = "org.acme.hdb.House";
     private final String STAMP_CERTIFICATE_ASSET_ORG = "org.acme.hdb.StampCertificate";
+    
+   // private final String TENANCY_AGREEMENT_ASSET_BYID_ORG = "";
+   //http://localhost:3000/api/queries/GetTenancySignatureByTenantId?tenantId="resource:org.acme.hdb.Tenant#t1"
+    
     private final Client CLIENT = ClientBuilder.newClient(); 
 
     public void persist(Object object) {
@@ -80,18 +88,29 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
             WebTarget myResource; 
             Response registerUserResponse;
             int responseStatus = 0 ;
+            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
             
      
             if (newUser.getUserType().equals("tenant")) {
                System.out.println("*********** REGISTER Tenant RESPONSE IS ");
                //CALL COMPOSER REST SERVER TO CREATE NEW USER(TENANT).
                myResource = CLIENT.target(COMPOSER_URL).path(TENANT_ASSET_ORG);
-               TenantAsset tenant = new TenantAsset(TENANT_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending");
+               Date tenantDob = newUser.getDateOfBirth();
+               String tenantDob_String = df.format(tenantDob);
+               System.out.println("********************** tenant dob " + tenantDob_String);
+               TenantAsset tenant = new TenantAsset(TENANT_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending" , "21-04-1992" );
                registerUserResponse = myResource.request().post(Entity.json(tenant));
                responseStatus = registerUserResponse.getStatus();
                System.out.println("*********** REGISTER TENANT RESPONSE IS " + responseStatus);
-               
-              
+//               
+//                  "$class": "org.acme.hdb.RegisterAsLandlord",
+//        "id": "G1234567P",
+//        "email": "leeYanJuan@gmail.com",
+//        "firstName": "TESTTSADe",
+//        "lastName": "Heng",
+//        "ICStatus": "Pending" ,
+//        "DOB" : "10-09-1980"
+//              
                     
             }
             else if(newUser.getUserType().equals("landlord")){
@@ -99,10 +118,20 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                //CALL COMPOSER REST SERVER TO CREATE NEW USER(lANDLORD).
                myResource = CLIENT.target(COMPOSER_URL).path(LANDLORD_ASSET_ORG);
                System.out.println("******** RESOURCES IS " + myResource.getUri());
-               LandlordAsset landlord = new LandlordAsset(LANDLORD_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending" , newUser.getDateOfBirth());
+               Date landlordDob = newUser.getDateOfBirth();
+               String landlordDob_String = df.format(landlordDob);
+               System.out.println("********************** Lanldord dob " + landlordDob_String);
+               System.out.println("********************** Lanldord dob " + newUser.getIdentificationNo() );
+                   System.out.println("********************** Lanldord dob " + newUser.getEmail());
+                     System.out.println("********************** Lanldord dob " +  newUser.getFirstName());
+                       System.out.println("********************** Lanldord dob " + newUser.getLastName());
+                         System.out.println("********************** Lanldord dob " + landlordDob_String);
+               
+               LandlordAsset landlord = new LandlordAsset(LANDLORD_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending" , "10-09-1980");
                registerUserResponse = myResource.request().post(Entity.json(landlord));
                responseStatus = registerUserResponse.getStatus();
                System.out.println("*********** REGISTER Landlord RESPONSE IS " + responseStatus );
+               System.out.println("********************* INFOR " + registerUserResponse.getStatusInfo());
                       
             }
             
@@ -432,10 +461,11 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         try {
           
          //   WebTarget myResource = client.target("http://localhost:3446/FoodEmblemV1-war/Resources").path("RestaurantDish").path("1");
-            WebTarget myResource = CLIENT.target(COMPOSER_URL).path(TENANT_ASSET_ORG);
+            WebTarget myResource = CLIENT.target(COMPOSER_URL).path("org.acme.hdb.Tenant");
               Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
             Response response = invocationBuilder.get();
             int resultFromChainCode = 0;
+            
             
             if (response.getStatus() == 200) {
                 String mesg = invocationBuilder.get(String.class);
@@ -476,4 +506,173 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         }
     }
 
+    
+    @Override
+    public List<TenancyAgreementAsset> retrieveTenancyAgreementByLandlordId(String landlordIC){
+        
+      //  http://localhost:3000/api/queries/GetTenancyAgreementByLandlordId?landlordId=resource%3Aorg.acme.hdb.Landlord%23l1
+           try{
+            
+         String landlordId = "resource%3Aorg.acme.hdb.Landlord%23" + landlordIC;
+         System.out.println("************* LANDLORD ID IS " + landlordId );
+         WebTarget myResource = CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancyAgreementByLandlordId").queryParam("landlordId", landlordId);
+         System.out.println("************************** FULL PATH" + CLIENT.target(COMPOSER_URL).path("api").path("queries").path("GetTenancyAgreementByLandlordId").queryParam("landlordId", landlordId).getUri());
+         Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
+         Response response = invocationBuilder.get();
+         int responseStatus = response.getStatus();
+   
+            System.out.println("***************** REPSINE IS  " + response.getStatusInfo());
+         //GETTING TENANT VALUE
+            if (responseStatus == 200) {
+                int noOfTa = 0;
+                System.out.println("*****************HELLO ");
+                String tenancyAgreementAssets = invocationBuilder.get(String.class);
+                JsonReader reader = Json.createReader(new StringReader(tenancyAgreementAssets));
+                JsonArray tenancyAgreeemnt = reader.readArray();
+                noOfTa = tenancyAgreeemnt.size();
+                System.out.println("********************** NOOFTA  " + noOfTa );
+                for(int i=0; i<noOfTa; i++){
+//                    
+                  System.out.println("TENANCY ID " + tenancyAgreeemnt.getJsonObject(i).getString("agreementId"));
+                    System.out.println("Date Created " + tenancyAgreeemnt.getJsonObject(i).get("dateCreated"));
+                      System.out.println("start Date " + tenancyAgreeemnt.getJsonObject(i).get("startDate"));
+                        System.out.println("SECURITY DEPOSIT  " + tenancyAgreeemnt.getJsonObject(i).get("securityDeposit"));
+                          System.out.println("ADVANCE RENTAL FEE " + tenancyAgreeemnt.getJsonObject(i).get("advanceRentalFee"));
+                            System.out.println("NO OF TENANTS " + tenancyAgreeemnt.getJsonObject(i).getInt("numOfTenants"));
+//                    userEmail = tenants.getJsonObject(i).getString("email");
+//                    firstName =  tenants.getJsonObject(i).getString("firstName");
+//                    lastName =  tenants.getJsonObject(i).getString("lastName");
+//                    icaStatus =  tenants.getJsonObject(i).getString("ICStatus");
+//                    dob = tenants.getJsonObject(i).getString("DOB");
+                    //dob = tenants.getJsonObject(i).get("lastName");
+                }
+                    
+                   
+                   
+
+            }else
+            {
+                
+            }
+            
+        }catch(Exception ex){
+            
+         ex.printStackTrace();
+        }
+       
+    
+        return null;
+        
+    }
+    
+    @Override
+    public void retrieveTenancySinatureByTenantId(String tenantIc){
+        
+        
+        //return list of signature  each signature (status )
+       // http://localhost:3000/api/queries/GetTenancySignatureByTenantId?tenantId="resource:org.acme.hdb.Tenant#t1\
+       
+         String tenantFullIC = "resource%3Aorg.acme.hdb.Tenant%23" + tenantIc;
+         System.out.println("************* TENANT ID IS " + tenantFullIC );
+         WebTarget myResource = CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", tenantFullIC);
+         System.out.println("************************** FULL PATH" + CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", tenantIc).getUri());
+         Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
+         Response response = invocationBuilder.get();
+         int responseStatus = response.getStatus();
+   
+            System.out.println("***************** REPSINE IS  " + response.getStatusInfo());
+         //GETTING TENANT VALUE
+            if (responseStatus == 200) {
+                 int noOfTs = 0;
+                String tenancySignatureAssets = invocationBuilder.get(String.class);
+                JsonReader reader = Json.createReader(new StringReader(tenancySignatureAssets));
+                JsonArray tenancySignature = reader.readArray();
+                noOfTs = tenancySignature.size();
+                
+                System.out.println("************* TENANCY SIGNATURE " + noOfTs);
+                
+                
+                  for(int i=0; i<noOfTs; i++){
+//                    
+                    System.out.println("SIGNATURE ID " + tenancySignature.getJsonObject(i).getString("signatureId"));
+                    System.out.println("is Singed " + tenancySignature.getJsonObject(i).get("isSigned"));
+                    //  System.out.println("start Date " + tenancyAgreeemnt.getJsonObject(i).get("startDate"));
+                  }
+                
+            }
+       
+       
+//        try{
+//            
+//         String tenantId = "resource:org.acme.hdb.Tenant#";
+//         WebTarget myResource = CLIENT.target(COMPOSER_URL).path("api").path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", "");
+//         Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
+//         Response response = invocationBuilder.get();
+//         int responseStatus = response.getStatus();
+//         int noOfTenant = 0;
+//         int noOfLandlord = 0;
+//         String userIdentificationNo = "";
+//         String userEmail ="";
+//
+//            
+//         //GETTING TENANT VALUE
+//            if (responseStatus == 200) {
+//                String tenantAssets = invocationBuilder.get(String.class);
+//                JsonReader reader = Json.createReader(new StringReader(tenantAssets));
+//                JsonArray tenants = reader.readArray();
+//                noOfTenant = tenants.size();
+//
+//            }
+            
+//        }catch(Exception ex){
+//            
+//         ex.printStackTrace();
+//        }
+       
+        
+        
+            //return null;
+        
+    }
+    
+    
+    @Override
+    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration , double securityDeposit , double advanceRentalFee, double rentalFee, String[] tenantsId , String houseId ){
+        
+        String houseID_Formatted = houseId ;
+        System.out.println("*********** Creating Tenancy Agreement");
+        WebTarget myResource;
+        Response createTenancyAgreementResponse;
+        int responseStatus = 0;
+        myResource = CLIENT.target(COMPOSER_URL).path(CREATE_TENANCY_AGREEMENT_ASSET_ORG);
+        TenancyAgreementAsset taAsset = new TenancyAgreementAsset(CREATE_TENANCY_AGREEMENT_ASSET_ORG, "AGREMENT_IDTEST131", rentalStartDate, rentalDuration, securityDeposit, advanceRentalFee, rentalFee, tenantsId, houseId);
+
+        createTenancyAgreementResponse = myResource.request().post(Entity.json(taAsset));
+        responseStatus = createTenancyAgreementResponse.getStatus();
+        System.out.println("*********** CREATE TENACNY AGREEMENT  RESPONSE IS " + responseStatus);
+        
+        if(responseStatus == 200)
+            return true;
+        
+        return false;
+//               
+
+
+        
+        /*{
+  "$class": "org.acme.hdb.CreateTenancyAgreement",
+  "agreementId": "a2",
+  "startDate": "2018-04-07T12:24:51.792Z",
+  "duration": 0,
+  "securityDeposit": 0,
+  "advanceRentalFee": 0,
+  "rentalFee": 0,
+  "tenants": ["t1","t2"],
+  "house": "h1"*/
+
+        
+        //http://localhost:3000/api/org.acme.hdb.CreateTenancyAgreement
+        
+        
+    }
 }

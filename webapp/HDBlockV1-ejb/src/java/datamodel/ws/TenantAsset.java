@@ -5,6 +5,7 @@
  */
 package datamodel.ws;
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -21,7 +22,8 @@ import javax.xml.bind.annotation.XmlType;
     "email",
     "firstName",
     "lastName",
-    "ICStatus"
+    "ICStatus",
+    "DOB"
 })
 public class TenantAsset {
     
@@ -31,17 +33,19 @@ public class TenantAsset {
     private String firstName;
     private String lastName;
     private String ICStatus;
+    private String DOB;
 
     public TenantAsset() {
     }
 
-    public TenantAsset(String $class, String id, String email, String firstName, String lastName, String ICStatus) {
+    public TenantAsset(String $class, String id, String email, String firstName, String lastName, String ICStatus, String DOB) {
         this.$class = $class;
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.ICStatus = ICStatus;
+        this.DOB = DOB;
     }
 
     /**
@@ -128,5 +132,19 @@ public class TenantAsset {
     public void setICStatus(String ICStatus) {
         this.ICStatus = ICStatus;
     }
-    
+
+    /**
+     * @return the DOB
+     */
+    public String getDOB() {
+        return DOB;
+    }
+
+    /**
+     * @param DOB the DOB to set
+     */
+    public void setDOB(String DOB) {
+        this.DOB = DOB;
+    }
+
 }

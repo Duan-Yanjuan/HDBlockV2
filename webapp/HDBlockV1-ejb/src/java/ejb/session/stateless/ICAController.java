@@ -10,6 +10,8 @@ import datamodel.ws.TenantAssetUpdate;
 import entity.ICAIdentificationRecordEntity;
 import entity.ICAStaffEntity;
 import java.io.StringReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,9 +47,11 @@ public class ICAController implements ICAControllerLocal {
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
     
-    private final String COMPOSER_URL = "http://172.25.105.61:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://192.168.1.78:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String TENANT_ASSET_ORG = "org.acme.hdb.Tenant";
     private final String LANDLORD_ASSET_ORG = "org.acme.hdb.Landlord";
+    private final String TENANT_ASSET_UPDATE_STATUS_ORG  = "org.acme.hdb.UpdateTenantStatus";
+    private final String LANDLORD_ASSET_UPDATE_STATUS_ORG = "org.acme.hdb.UpdateLandlordStatus";
      private final Client CLIENT = ClientBuilder.newClient(); 
     
 
@@ -143,7 +147,7 @@ public class ICAController implements ICAControllerLocal {
         */
  
         String ic = "";
-        Date dob = new Date();
+        String dob = "";
         String firstName  ="";
         String lastName = "";
         String email = "";
@@ -154,7 +158,7 @@ public class ICAController implements ICAControllerLocal {
             
         System.out.println("************* processUserIdentity " + user.getUserType());
         ic = user.getIdentificationNo();  //change to value return in json format later on
-        dob = new Date(); //change to json value
+        dob = user.getDob(); //change to json value
         firstName = user.getFirstName();
         lastName = user.getLastName(); //change to json value
         email = user.getEmail();
@@ -168,12 +172,13 @@ public class ICAController implements ICAControllerLocal {
             //send the update request to composer res to update the ICStatus 
          
              if(userType.equals("Tenant")){
-                
-                 updateUserAsset(userType, TENANT_ASSET_ORG ,"Valid" , userIdentitification);
+                 System.out.println("************* TENANT IC IS VALID. ABOUT TO UPDATE THE STATUS");
+                 updateUserAsset(userType, TENANT_ASSET_UPDATE_STATUS_ORG ,"Valid" , userIdentitification);
                 
             }
             else if(userType.equals("Landlord")){
-                 updateUserAsset(userType, LANDLORD_ASSET_ORG ,"Valid", userIdentitification);
+                 System.out.println("************* LANDLORD IC IS VALID. ABOUT TO UPDATE THE STATUS");
+                 updateUserAsset(userType, LANDLORD_ASSET_UPDATE_STATUS_ORG ,"Valid", userIdentitification);
             }
             
             return true;
@@ -183,12 +188,13 @@ public class ICAController implements ICAControllerLocal {
             
             System.out.println("************* INVALID");
             if(userType.equals("Tenant")){
-                
-                 updateUserAsset(userType, TENANT_ASSET_ORG ,"Invalid" , user.getIdentificationNo());
+                     System.out.println("************* TENANT IC NOT VALid. ABOUT TO UPDATE THE STATUS");
+                 updateUserAsset(userType, TENANT_ASSET_UPDATE_STATUS_ORG ,"Invalid" , user.getIdentificationNo());
                 
             }
             else if(userType.equals("Landlord")){
-                 updateUserAsset(userType, LANDLORD_ASSET_ORG ,"Invalid" , user.getIdentificationNo());
+                 System.out.println("************* LADNLORD IC NOT VALid. ABOUT TO UPDATE THE STATUS");
+                 updateUserAsset(userType, LANDLORD_ASSET_UPDATE_STATUS_ORG ,"Invalid" , user.getIdentificationNo());
             }
            
            
@@ -206,15 +212,20 @@ public class ICAController implements ICAControllerLocal {
         Response registerUserResponse;
         
          myResource = CLIENT.target(COMPOSER_URL).path(path);
+         System.out.println("*full path " + myResource.getUri());
          TenantAssetUpdate tenant;
          LandlordAssetUpdate landlord;
          
          if(userType.equals("Tenant")){
-            tenant = new TenantAssetUpdate(path, ic, status);
-            registerUserResponse = myResource.request().put(Entity.json(tenant));
+            System.out.println("************* TENTANT CALLIONG COMPOSER. PATH IS " + path + " Status is " + status  + " IC is " + ic);
+            tenant = new TenantAssetUpdate(path, status, ic);
+            registerUserResponse = myResource.request().post(Entity.json(tenant));
             System.out.println("************* Response " + registerUserResponse.getStatus());
+            System.out.println("************* Response " + registerUserResponse.getStatusInfo());
+            
          }else if(userType.equals("Landlord")){
-             landlord = new LandlordAssetUpdate(path, ic, status);
+             System.out.println("************* LADNLO CALLIONG COMPOSER");
+             landlord = new LandlordAssetUpdate(path, ic , status);
              registerUserResponse = myResource.request().put(Entity.json(landlord));
              System.out.println("************* Response " + registerUserResponse.getStatus());
          }
@@ -241,7 +252,7 @@ public class ICAController implements ICAControllerLocal {
          String firstName = "";
          String lastName  = "";
          String icaStatus = "";
-         Date dob = new Date();
+         String dob = "";
             
          //GETTING TENANT VALUE
             if (responseStatus == 200) {
@@ -256,6 +267,7 @@ public class ICAController implements ICAControllerLocal {
                     firstName =  tenants.getJsonObject(i).getString("firstName");
                     lastName =  tenants.getJsonObject(i).getString("lastName");
                     icaStatus =  tenants.getJsonObject(i).getString("ICStatus");
+                    dob = tenants.getJsonObject(i).getString("DOB");
                     //dob = tenants.getJsonObject(i).get("lastName");
                     
                     if(icaStatus.equals("Pending")){  
@@ -268,8 +280,11 @@ public class ICAController implements ICAControllerLocal {
                     System.out.println("**************** tenant firstName[" + i + "] is " + firstName);
                     System.out.println("**************** tenant  lastName[" + i + "] is " + lastName);
                     System.out.println("**************** tenant ICStatus[" + i + "] is " + icaStatus );
+                    System.out.println("**************** tenant DOB[" + i + "] is " + dob );
 
 
+
+                    
                 }
             }
             
@@ -320,27 +335,32 @@ public class ICAController implements ICAControllerLocal {
     
 
     
-    private boolean checkIdentificationValidity(String identificationNumber, Date dateOfBirth, String firstName, String lastName) throws ICRecordNotFoundException
+    private boolean checkIdentificationValidity(String identificationNumber, String dateOfBirth, String firstName, String lastName) throws ICRecordNotFoundException
     {
        
-        
+            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+           
             Query query = em.createQuery("SELECT i FROM ICAIdentificationRecordEntity i WHERE i.nric = :ic");
             query.setParameter("ic", identificationNumber);
             List<ICAIdentificationRecordEntity> record = query.getResultList();
             
             
             if(record.isEmpty()){
-                throw new ICRecordNotFoundException("No Such Identity");
+                throw new ICRecordNotFoundException("Non-Existence of Such Identity Number");
             }
             else
             {
-               if(record.get(0).getFullname().equals(firstName + " " + lastName) && record.get(0).getDateOfBirth() == dateOfBirth) //must put and DOB
+                  System.out.println("***************** IC STATUS FOUND" );
+                 String dateOfBirth_String = df.format(record.get(0).getDateOfBirth());
+                System.out.println("***************** DOB DATABASE " + dateOfBirth_String + " DOB from BC " + dateOfBirth );
+                System.out.println("***************** NAME IN DATA BASE " + record.get(0).getFullname() + " Name from BC " + firstName + " " + lastName );
+               if(record.get(0).getFullname().equals(firstName + " " + lastName) && dateOfBirth_String.equals(dateOfBirth)) //must put and DOB
                 {
                     return true;
                 }
                 else
                 {
-                    throw new ICRecordNotFoundException("Applicant information does not match the existing record.");
+                    throw new ICRecordNotFoundException("Mismatch of Application Information with His/Her Identity Numebr");
                 }
                 
                 

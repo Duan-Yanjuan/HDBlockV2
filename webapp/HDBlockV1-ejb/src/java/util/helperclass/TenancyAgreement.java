@@ -21,7 +21,7 @@ public class TenancyAgreement {
     private Double rentalFee;
     private Double advanceRentalFeePaid;
     private Double securityDepositPaid;
-    private String tenancyStatus; // Unsigned, signed , expired
+    private String tenancyStatus; //Pending, Active, signed , invalid,  expired
    /* private Landlord landlord;
     private List<Tenant> tenants;
     private House houseRented;*/

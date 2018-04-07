@@ -87,11 +87,11 @@ public class ICAIdentityManagedBean implements Serializable {
            boolean statusIsApproved = iCAControllerLocal.processUserIdentity(selectedUser);
           
            if(statusIsApproved){
-               identityMessage = "Identity has been approved.";
+               identityMessage = "User Identity " + selectedUser.getIdentificationNo() + " Is VALID and Has Been ENDORSED.";
            }
             
         }catch(Exception ex){
-            identityMessage = "Identity has been rejected due to " + ex.getMessage();
+            identityMessage = "User Identity " + selectedUser.getIdentificationNo() + " Has Been REJECTED Due to " + ex.getMessage();
          
         }
         

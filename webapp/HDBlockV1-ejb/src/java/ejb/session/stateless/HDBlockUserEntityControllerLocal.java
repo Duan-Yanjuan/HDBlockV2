@@ -5,8 +5,10 @@
  */
 package ejb.session.stateless;
 
+import datamodel.ws.TenancyAgreementAsset;
 import entity.HDBHouseEntity;
 import entity.HDBlockUserEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewHouseException;
@@ -45,6 +47,12 @@ public interface HDBlockUserEntityControllerLocal {
     public HDBHouseEntity registerHouse(HDBHouseEntity newHouse, String landlordEmail) throws UserNotFoundException, CreateNewHouseException;
 
     public List<HDBlockUserEntity> retrieveAllUser();
+
+    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration, double securityDeposit, double advanceRentalFee, double rentalFee, String[] tenantsId, String houseId);
+
+    public List<TenancyAgreementAsset> retrieveTenancyAgreementByLandlordId(String landlordIC);
+
+    public void retrieveTenancySinatureByTenantId(String tenantIc);
 
  
 

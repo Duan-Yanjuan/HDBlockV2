@@ -15,24 +15,25 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlType(name = "tenantAssetUpdate", propOrder = {
     "$class",
-    "id",
-    "ICStatus",
+    "status",
+    "tenant",
 
 })
 public class TenantAssetUpdate {
     
     private String $class;
-    private String id;
-    private String ICStatus;
+    private String status;
+    private String tenant;
 
     public TenantAssetUpdate() {
     }
 
-    public TenantAssetUpdate(String $class, String id, String ICStatus) {
+    public TenantAssetUpdate(String $class, String status, String tenant) {
         this.$class = $class;
-        this.id = id;
-        this.ICStatus = ICStatus;
+        this.status = status;
+        this.tenant = tenant;
     }
+    
 
     /**
      * @return the $class
@@ -49,32 +50,34 @@ public class TenantAssetUpdate {
     }
 
     /**
-     * @return the id
+     * @return the status
      */
-    public String getId() {
-        return id;
+    public String getStatus() {
+        return status;
     }
 
     /**
-     * @param id the id to set
+     * @param status the status to set
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**
-     * @return the ICStatus
+     * @return the tenant
      */
-    public String getICStatus() {
-        return ICStatus;
+    public String getTenant() {
+        return tenant;
     }
 
     /**
-     * @param ICStatus the ICStatus to set
+     * @param tenant the tenant to set
      */
-    public void setICStatus(String ICStatus) {
-        this.ICStatus = ICStatus;
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
     }
+
+ 
     
     
 }
