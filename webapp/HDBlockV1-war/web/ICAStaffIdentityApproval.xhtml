@@ -66,8 +66,8 @@
                             <h:outputText style="font-size:medium;"  value="#{iCAIdentityManagedBean.selectedUser.identityValidityPeriod}" />
                               <h:outputText style="font-size:medium;" value="" />
 
-                            <p:commandButton update=":form:msgs" process="@this" value="Approve" oncomplete="PF('requestDialog').hide()"   action="#{iCAIdentityManagedBean.finalProcessIdentity('Approve')}" />
-                            <p:commandButton update=":form:msgs"  value="Reject" action="#{iCAIdentityManagedBean.finalProcessIdentity('Reject')}" />
+                            <p:commandButton update=":form:msgs :form:identityRequestTable" process="@this" value="Approve" oncomplete="PF('requestDialog').hide()"   action="#{iCAIdentityManagedBean.finalProcessIdentity('Approve')}" />
+                            <p:commandButton update=":form:msgs :form:identityRequestTable"  process="@this"  value="Reject"  oncomplete="PF('requestDialog').hide()"  action="#{iCAIdentityManagedBean.finalProcessIdentity('Reject')}" />
                              <h:outputText style="font-size:medium;" value="" />
 
                         </p:panelGrid>

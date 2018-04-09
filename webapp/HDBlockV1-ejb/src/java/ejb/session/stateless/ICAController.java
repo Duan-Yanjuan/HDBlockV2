@@ -138,15 +138,14 @@ public class ICAController implements ICAControllerLocal {
     public boolean finalProcessUserIdentity(String ic,String userType , String result ){  //this is triggered when ICA staff manually choose to reject or approve.
         
         String status = "Invalid";
-        if(result.equals(CLIENT))
-        
+               
         if(result.equals("Approve")){
           status = "Valid";
           hDBlockUserEntityControllerLocal.updateUserIdentity(ic); // change user status to isValid.
             
         }
         
-        System.out.println("************* Update Chain code with preocessing result = " + result + " for user type " + userType);
+        System.out.println("************* Update Chain code with preocessing result = " + result + " for user type " + userType + " status is " + status);
         if (userType.equals("Tenant"))
            return updateUserAsset(userType, TENANT_ASSET_UPDATE_STATUS_ORG, status, ic);
         else if(userType.equals("Landlord")) 

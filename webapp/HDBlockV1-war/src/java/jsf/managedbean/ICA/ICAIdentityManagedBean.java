@@ -115,13 +115,18 @@ public class ICAIdentityManagedBean implements Serializable {
         System.out.println("*********** RESULT " + result + selectedUser.getEmail());
          FacesContext context = FacesContext.getCurrentInstance();
         
-        context.addMessage(null, new FacesMessage("Successful",  "Your message: " + result) );
-       /* boolean processHasSucceeded = iCAControllerLocal.finalProcessUserIdentity(selectedUser.getIdentificationNo(), selectedUser.getUserType(), result);
-        if(processHasSucceeded){
-            identityMessage = "User Identity " + selectedUser.getIdentificationNo() + "Has Been ENDORSED.";
+          boolean processHasSucceeded = iCAControllerLocal.finalProcessUserIdentity(selectedUser.getIdentificationNo(), selectedUser.getUserType(), result);
+        if(processHasSucceeded && result.equals("Approve")){
+             userRequest = iCAControllerLocal.retrieveUserWithPendingStatus();
+         context.addMessage(null, new FacesMessage("Successful",   "User Identity " + selectedUser.getIdentificationNo() + " Has Been ENDORSED."));
+        }else if(processHasSucceeded && result.equals("Reject")){
+             userRequest = iCAControllerLocal.retrieveUserWithPendingStatus();
+          context.addMessage(null, new FacesMessage("Successful",   "Applicant Has Been Rejected"));
+          
+          
         }else{
-           identityMessage = "Error has occured while endorsing the user. Please contact Admin";
-        }*/
+           context.addMessage(null, new FacesMessage("ERROR",   "Error in Endorsing Identity. Please contact Admin"));
+        }
                //make another call
             
           
