@@ -6,8 +6,11 @@
 package jsf.managedbean.ICA;
 
 import ejb.session.stateless.ICAControllerLocal;
+import entity.ICAIdentificationRecordEntity;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -36,6 +39,7 @@ public class ICAIdentityManagedBean implements Serializable {
     
     private List<PendingUser> userRequest;
     private PendingUser selectedUser;
+    private boolean userStatusIsValid;
     private String identityMessage;
     
     public ICAIdentityManagedBean() {
@@ -85,16 +89,38 @@ public class ICAIdentityManagedBean implements Serializable {
         try{
             
            boolean statusIsApproved = iCAControllerLocal.processUserIdentity(selectedUser);
-          
+           DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
            if(statusIsApproved){
-               identityMessage = "Identity has been approved.";
+               
+               userStatusIsValid = true;
+               ICAIdentificationRecordEntity identityHolder = iCAControllerLocal.retrieveAllIdentificationById(selectedUser.getIdentificationNo());
+               selectedUser.setIdentityValidityPeriod(df.format(identityHolder.getValidityPeriod()));
+               selectedUser.setPassType(identityHolder.getIdentificationType());
+               
+               
+               //make another call
+               //identityMessage = "User Identity " + selectedUser.getIdentificationNo() + " Is VALID and Has Been ENDORSED.";
            }
             
         }catch(Exception ex){
-            identityMessage = "Identity has been rejected due to " + ex.getMessage();
+            userStatusIsValid = false;
+            identityMessage = "User Identity " + selectedUser.getIdentificationNo() + " Has Been REJECTED Due to " + ex.getMessage();
          
         }
         
+    }
+    
+    public void finalProcessIdentity(String result){
+        
+        boolean processHasSucceeded = iCAControllerLocal.processUserIdentity(selectedUser.getIdentificationNo(), selectedUser.getUserType(), result);
+        if(processHasSucceeded){
+            identityMessage = "User Identity " + selectedUser.getIdentificationNo() + "Has Been ENDORSED.";
+        }else{
+           identityMessage = "Error has occured while endorsing the user. Please contact Admin";
+        }
+               //make another call
+            
+          
     }
     
    /* public void processIdentity(ActionEvent event) throws IOException{
@@ -129,6 +155,21 @@ public class ICAIdentityManagedBean implements Serializable {
      */
     public void setIdentityMessage(String identityMessage) {
         this.identityMessage = identityMessage;
+    }
+
+
+    /**
+     * @return the userStatusIsValid
+     */
+    public boolean isUserStatusIsValid() {
+        return userStatusIsValid;
+    }
+
+    /**
+     * @param userStatusIsValid the userStatusIsValid to set
+     */
+    public void setUserStatusIsValid(boolean userStatusIsValid) {
+        this.userStatusIsValid = userStatusIsValid;
     }
     
 }

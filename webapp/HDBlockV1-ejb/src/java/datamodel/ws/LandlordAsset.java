@@ -22,29 +22,29 @@ import javax.xml.bind.annotation.XmlType;
     "firstName",
     "lastName",
     "ICStatus",
-    "dob"
+    "DOB"
 })
 public class LandlordAsset {
-      private String $class;
+    private String $class;
     private String id;
     private String email;
     private String firstName;
     private String lastName;
     private String ICStatus;
-    private Date dob;
+    private String DOB;
     
     
     public LandlordAsset() {
     }
 
-    public LandlordAsset(String $class, String id, String email, String firstName, String lastName, String ICStatus , Date dob) {
+    public LandlordAsset(String $class, String id, String email, String firstName, String lastName, String ICStatus , String DOB) {
         this.$class = $class;
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.ICStatus = ICStatus;
-        this.dob = dob;
+        this.DOB = DOB;
     }
 
 
@@ -133,18 +133,20 @@ public class LandlordAsset {
     }
 
     /**
-     * @return the dob
+     * @return the DOB
      */
-    public Date getDob() {
-        return dob;
+    public String getDOB() {
+        return DOB;
     }
 
     /**
-     * @param dob the dob to set
+     * @param DOB the DOB to set
      */
-    public void setDob(Date dob) {
-        this.dob = dob;
+    public void setDOB(String DOB) {
+        this.DOB = DOB;
     }
+
+   
 
 
 }

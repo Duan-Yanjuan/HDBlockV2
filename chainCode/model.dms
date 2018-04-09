@@ -40,6 +40,7 @@ abstract asset Client identified by id {
     o String email
     o String firstName
     o String lastName
+    o String DOB
     o String ICStatus default = "Pending"  //PENDING, VALID, INVALID
 }
 
@@ -74,6 +75,7 @@ asset TenancyAgreement identified by agreementId {
     o Boolean isStampDutyPaid default = false
     --> StampCertificate stampCertificate optional
     --> House house
+    --> Landlord landlord
     --> TenancySignature[] signatureList optional
  //     --> Tenant[] tenants
 }
@@ -112,6 +114,7 @@ transaction RegisterAsTenant {
     o String email
     o String firstName
     o String lastName
+    o String DOB
 }
 
 //!!! in report, should delete "wallet" attribute
@@ -121,6 +124,7 @@ transaction RegisterAsLandlord {
     o String email
     o String firstName
     o String lastName
+    o String DOB
 }
   
 // check whether should use reference for havent-created asset (house) --> i think should not

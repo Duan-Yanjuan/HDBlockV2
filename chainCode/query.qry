@@ -11,3 +11,17 @@ query GetLandlordsByStatus {
         SELECT org.acme.hdb.Landlord
             WHERE (ICStatus == _$status)
 }
+
+query GetTenancySignatureByTenantId {
+    description: "Select tenancy signature based on tenant ID"
+    statement:
+        SELECT org.acme.hdb.TenancySignature
+            WHERE (tenant == _$tenantId) //test use "t1" or "resource....."
+}
+
+query GetTenancyAgreementByLandlordId {
+    description: "Select tenancy agreement based on tenant ID"
+    statement:
+        SELECT org.acme.hdb.TenancyAgreement
+            WHERE (landlord == _$landlordId) 
+}

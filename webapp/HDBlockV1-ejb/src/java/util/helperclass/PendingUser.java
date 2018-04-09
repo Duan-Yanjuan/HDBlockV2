@@ -18,13 +18,15 @@ public class PendingUser {
     private String email;
     private String firstName;
     private String lastName;
-    private Date dob;
+    private String dob;
     private String userType;
+    private String identityValidityPeriod;
+    private String passType;
 
     public PendingUser() {
     }
 
-    public PendingUser(int requestId, String identificationNo, String email, String firstName, String lastName, Date dob, String userType) {
+    public PendingUser(int requestId, String identificationNo, String email, String firstName, String lastName, String dob, String userType) {
         this.requestId = requestId;
         this.identificationNo = identificationNo;
         this.email = email;
@@ -92,20 +94,6 @@ public class PendingUser {
     }
 
     /**
-     * @return the dob
-     */
-    public Date getDob() {
-        return dob;
-    }
-
-    /**
-     * @param dob the dob to set
-     */
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
-
-    /**
      * @return the requestId
      */
     public int getRequestId() {
@@ -131,6 +119,48 @@ public class PendingUser {
      */
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    /**
+     * @return the dob
+     */
+    public String getDob() {
+        return dob;
+    }
+
+    /**
+     * @param dob the dob to set
+     */
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    /**
+     * @return the identityValidityPeriod
+     */
+    public String getIdentityValidityPeriod() {
+        return identityValidityPeriod;
+    }
+
+    /**
+     * @param identityValidityPeriod the identityValidityPeriod to set
+     */
+    public void setIdentityValidityPeriod(String identityValidityPeriod) {
+        this.identityValidityPeriod = identityValidityPeriod;
+    }
+
+    /**
+     * @return the passType
+     */
+    public String getPassType() {
+        return passType;
+    }
+
+    /**
+     * @param passType the passType to set
+     */
+    public void setPassType(String passType) {
+        this.passType = passType;
     }
 
  

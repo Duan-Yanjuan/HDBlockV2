@@ -66,8 +66,8 @@
                             <p:fileUpload id="image" value="#{fileUploadView.file}" style="width: 250px" mode="simple" skinSimple="true"/>
 
 
-                            <p:commandButton value="Register" action="#{houseManagedBean.registerHouse}" style="width:205px;"  update="@form" icon="fa fa-arrow-circle-up" />
-                            <p:commandButton value="Reset" style="width:205px;"  update="@form" icon="fa fa-arrow-circle-up"/>
+                            <p:commandButton rendered="#{empty houseManagedBean.newHouse }" value="Register" action="#{houseManagedBean.registerHouse}" style="width:205px;"  update="@form" icon="fa fa-arrow-circle-up" />
+                            <p:commandButton rendered="#{empty houseManagedBean.newHouse }"  value="Reset" style="width:205px;"  update="@form" icon="fa fa-arrow-circle-up"/>
                             <h:outputLabel value="" />
                             <h:outputLabel value="" />
                         </form> 
@@ -104,7 +104,8 @@
                                             <h:outputText value="#{landlordHouse.rentalPrice}" style="font-weight: bold"/>
 
                                             <h:outputText value="Current Status" />
-                                            <h:outputText value="Occupied" style="font-weight: bold"/>
+                                            <h:outputText rendered="#{!landlordHouse.statusIsValid}" value="Waiting for Approval" style="font-weight: bold"/>
+                                            <h:outputText rendered="#{landlordHouse.statusIsValid}" value="Occupied" style="font-weight: bold"/>
                                             
                                             <p:selectBooleanButton rendered="#{houseManagedBean.rentalStatus != 'occupied'}"  id="udpateButton" value="#{selectBooleanView.value2}" onLabel="edit" offLabel="Update" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px">
                                                 <p:ajax listener="#{selectBooleanView.addMessage}" />

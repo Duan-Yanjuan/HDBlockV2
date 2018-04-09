@@ -38,15 +38,38 @@
             </p:dataTable>
 
             <p:dialog header="Identity Info" appendTo="@(body)"  widgetVar="requestDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="300px" height="100px">
-                <!--                <p:outputPanel id="requestOutcome" style="text-align:center;">
-                                    <p:panelGrid style="border: 0px !important"  columns="1" rendered="#{not empty iCAIdentityManagedBean.selectedUser}" columnClasses="label,value">
-                                 
-                
-                                    </p:panelGrid>
-                                </p:outputPanel>-->
 
-                <h:outputText style="font-size:medium;" value="Process Result: " />
-                <h:outputText style="font-size:medium;"  value="#{iCAIdentityManagedBean.identityMessage}" />
+<!--                 <h:outputText style="font-size:medium;" value="Process Result: " />-->
+               
+                
+                <h:form>
+                    
+                    <h:outputText  style="font-size:medium;"  value="#{iCAIdentityManagedBean.identityMessage}" />
+                    <h:outputText  style="font-size:medium;"  value="" />
+                    <br/>
+                       <p:outputPanel  rendered="#{iCAIdentityManagedBean.userStatusIsValid}" id="requestOutcome" style="text-align:center;">
+                        <p:panelGrid style="border: 0px !important"  columns="2" rendered="#{not empty iCAIdentityManagedBean.selectedUser}">
+
+                            <h:outputText style="font-size:medium;" value="Identity Result" />
+                            <h:outputText style="font-size:medium;"  value="" />
+                            <h:outputText style="font-size:medium;" value="Name : " />
+                            <h:outputText style="font-size:medium;"  value="#{iCAIdentityManagedBean.selectedUser.firstName} #{iCAIdentityManagedBean.selectedUser.lastName} (Match)" />
+                            <h:outputText style="font-size:medium;" value="Identification No : " />
+                            <h:outputText style="font-size:medium;"  value="#{iCAIdentityManagedBean.selectedUser.identificationNo} (Match)" />
+                            <h:outputText style="font-size:medium;" value="Date of Birth: " />
+                            <h:outputText style="font-size:medium;"  value="#{iCAIdentityManagedBean.selectedUser.identificationNo} (Match)" />
+                            <h:outputText style="font-size:medium;" value="Pass Type: " />
+                            <h:outputText style="font-size:medium;"  value="#{iCAIdentityManagedBean.selectedUser.passType}" />
+                            <h:outputText style="font-size:medium;" value="Pass Valid Until: " />
+                            <h:outputText style="font-size:medium;"  value="#{iCAIdentityManagedBean.selectedUser.identityValidityPeriod}" />
+
+                            <p:commandButton update="@form" value="Approve"  action="#{iCAIdentityManagedBean.finalProcessIdentity('Approve')}" />
+                            <p:commandButton update="@form"  value="Reject" action="#{iCAIdentityManagedBean.finalProcessIdentity('Reject')}" />
+
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </h:form>
+
             </p:dialog>
 
         </h:form>

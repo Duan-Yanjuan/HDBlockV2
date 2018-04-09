@@ -23,7 +23,8 @@
             <h:panelGrid columns="1" style="width:100%">
                 <p:graphicImage name="images/car/#{car.brand}.gif"/> 
  
-                <h:outputText value="Rental Price : $ #{house.rentalPrice}" />
+                <h:outputText value="Address: #{house.address} #{house.postalCode}" />
+                <h:outputText value="Rental Price: $ #{house.rentalPrice}" />
  
                 <p:commandLink update=":browseHouseForm:houseDetail" oncomplete="PF('houseDialog').show()" title="View Detail">
                     <h:outputText styleClass="ui-icon ui-icon-search" style="margin:0 auto;" />
