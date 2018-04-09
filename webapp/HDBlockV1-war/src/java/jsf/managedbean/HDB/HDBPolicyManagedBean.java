@@ -18,6 +18,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.RowEditEvent;
+import util.exception.CreateNewPolicyException;
 
 /**
  *
@@ -34,15 +35,31 @@ public class HDBPolicyManagedBean implements Serializable {
     
     private List<HDBRentingPolicyEntity> rentingPolicies;
     private HDBRentingPolicyEntity selectedPolicy;
+    private HDBRentingPolicyEntity newPolicy;   
     
     public HDBPolicyManagedBean() {
         rentingPolicies = new ArrayList<>();
+        newPolicy = new HDBRentingPolicyEntity();
     }
     
     @PostConstruct
     public void postConstruct(){    
         rentingPolicies = hDBControllerLocal.retrieveHDBRentingPolicies();
         selectedPolicy = rentingPolicies.get(0);
+    }
+    
+        /**
+     * @return the newPolicy
+     */
+    public HDBRentingPolicyEntity getNewPolicy() {
+        return newPolicy;
+    }
+
+    /**
+     * @param newPolicy the newPolicy to set
+     */
+    public void setNewPolicy(HDBRentingPolicyEntity newPolicy) {
+        this.newPolicy = newPolicy;
     }
     
     public List<HDBRentingPolicyEntity> getRentingPolicies() {
@@ -55,8 +72,10 @@ public class HDBPolicyManagedBean implements Serializable {
     
     
     public void onRowEdit(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("Policy Edited", ((HDBRentingPolicyEntity) event.getObject()).getId().toString());
+        FacesMessage msg = new FacesMessage("Updated Policy ID: ", ((HDBRentingPolicyEntity) event.getObject()).getId().toString());
         FacesContext.getCurrentInstance().addMessage(null, msg);
+        HDBRentingPolicyEntity editedPolicy = (HDBRentingPolicyEntity) event.getObject();
+        this.updatePolicy(editedPolicy);     
     }
      
     public void onRowCancel(RowEditEvent event) {
@@ -92,6 +111,27 @@ public class HDBPolicyManagedBean implements Serializable {
         return result;
     }
 
-
+    public void createNewPolicy(){
+       
+        try{
+          
+            hDBControllerLocal.createNewPolicy(newPolicy);
+            newPolicy = new HDBRentingPolicyEntity();
+            
+            
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "The new policy is being created.", null));
+      
+        }
+        catch(CreateNewPolicyException ex){
+             
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, ex.getMessage(), null));
+      
+        }
+       
+    }
+       
+     public void updatePolicy(HDBRentingPolicyEntity editedPolicy){
+         hDBControllerLocal.updatePolicy(editedPolicy);
+     }  
     
 }

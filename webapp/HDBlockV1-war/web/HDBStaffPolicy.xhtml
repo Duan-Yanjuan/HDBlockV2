@@ -53,7 +53,40 @@
             </p:dataTable>
 
             
-        <!--
+            <h2>Create New Policy</h2>
+           
+                 <p:messages id="createNewPolicy_error_messages" closable="true"></p:messages>
+                  
+
+                    <br/>
+                    <h:outputLabel  value="" />
+                    <h:outputLabel for="policyCode" value="Policy Code:" />
+                    <p:inputText id="policyCode"   value="#{hDBPolicyManagedBean.newPolicy.policyCode}" label="Policy Code" required="true" requiredMessage="Please enter new policy code."/>
+
+                    <h:outputLabel for="flatType" value="Flat Type:" />
+                    <p:inputText id="flatType"  value="#{hDBPolicyManagedBean.newPolicy.flatType}" label="Flat Type" required="true" requiredMessage="Please enter flat type."/>
+
+                    <h:outputLabel for="rentingType" value="Renting Type:" />
+                    <p:inputText id="rentingType"  value="#{hDBPolicyManagedBean.newPolicy.rentingType}" label="Renting Type" required="true" requiredMessage="Please enter reting type."/>
+
+                    <h:outputLabel for="maxNumofTenantsAllowed" value="Max. Num of Tenants Allowed:" />
+                    <p:inputText id="maxNumofTenantsAllowed"  value="#{hDBPolicyManagedBean.newPolicy.maxNumofTenantsAllowed}" label="Max. Num of Tetants Allowed" required="true" requiredMessage="Please enter max. num of tenants allowed." validatorMessage="Invalid Email Address" />
+                    
+
+                    <p:commandButton value="CreateNewPolicy" action="#{hDBPolicyManagedBean.createNewPolicy}" update="@form" icon="fa fa-arrow-circle-up" oncomplete="PF('createNewPolicyDialog').show()" ajax='false' />
+
+        
+                  
+            
+            
+            
+            
+            
+            
+        
+            
+            
+            <!--
         <p:treeTable value="#{ttEditView.root2}" editable="true" editMode="cell" var="document">
         <f:facet name="header">
             Cell Editing

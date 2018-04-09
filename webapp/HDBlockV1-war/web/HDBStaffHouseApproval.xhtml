@@ -1,10 +1,49 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./template/HDBMasterPage.xhtml">
+                template="./template/HDBMasterPage.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        content
+        <h:form id="form">
+
+            <p:growl id="msgs" showDetail="true" />
+            <p:dataTable id="rentOutRequestTable" var="houseRequest" value="#{hDBHouseRequestManagedBean.houseRequest}">
+                <f:facet name="header">
+                    <h1> House Approval Request </h1>
+                </f:facet>
+                <p:column headerText="Request Id">
+                    <h:outputText value="#{houseRequest.requestId}" />
+                </p:column>
+                <p:column headerText="House Id">
+                    <h:outputText value="#{houseRequest.houseId}" />
+                </p:column>
+                <p:column headerText="Flat Type">
+                    <h:outputText value="#{houseRequest.type}" />
+                </p:column>
+
+                <p:column style="width:32px;text-align: center">
+                    <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('requestDialog').show()"  title="View">
+                        <f:setPropertyActionListener value="#{houseRequest}" target="#{hDBHouseRequestManagedBean.selectedHouse}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:dialog header="Validity Info" appendTo="@(body)"  widgetVar="requestDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="300px" height="100px">
+                <!--                <p:outputPanel id="requestOutcome" style="text-align:center;">
+                                    <p:panelGrid style="border: 0px !important"  columns="1" rendered="#{not empty hDBHouseRequestManagedBean.selectedHouse}" columnClasses="label,value">
+                                 
+                
+                                    </p:panelGrid>
+                                </p:outputPanel>-->
+
+                <h:outputText style="font-size:medium;" value="Process Result: " />
+                <h:outputText style="font-size:medium;"  value="#{hDBHouseRequestManagedBean.validityMessage}" />
+            </p:dialog>
+
+        </h:form>
     </ui:define>
 
 </ui:composition>
