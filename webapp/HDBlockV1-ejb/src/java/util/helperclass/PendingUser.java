@@ -20,6 +20,8 @@ public class PendingUser {
     private String lastName;
     private String dob;
     private String userType;
+    private String identityValidityPeriod;
+    private String passType;
 
     public PendingUser() {
     }
@@ -131,6 +133,34 @@ public class PendingUser {
      */
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    /**
+     * @return the identityValidityPeriod
+     */
+    public String getIdentityValidityPeriod() {
+        return identityValidityPeriod;
+    }
+
+    /**
+     * @param identityValidityPeriod the identityValidityPeriod to set
+     */
+    public void setIdentityValidityPeriod(String identityValidityPeriod) {
+        this.identityValidityPeriod = identityValidityPeriod;
+    }
+
+    /**
+     * @return the passType
+     */
+    public String getPassType() {
+        return passType;
+    }
+
+    /**
+     * @param passType the passType to set
+     */
+    public void setPassType(String passType) {
+        this.passType = passType;
     }
 
  

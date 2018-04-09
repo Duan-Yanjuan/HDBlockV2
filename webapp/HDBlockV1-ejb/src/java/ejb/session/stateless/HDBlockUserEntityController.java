@@ -41,9 +41,8 @@ import util.exception.CreateNewHouseException;
 import util.exception.CreateNewUserException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UserNotFoundException;
-import util.helperclass.PendingUser;
+import util.helperclass.LandlordTenancyAgreement;
 import util.helperclass.ProductEntity;
-import util.helperclass.TenancyAgreement;
 import util.helperclass.Tenant;
 import util.security.CryptographicHelper;
 
@@ -56,7 +55,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
 
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
-    private final String COMPOSER_URL = "http://192.168.1.78:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://172.25.96.144:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String TENANT_ASSET_ORG = "org.acme.hdb.RegisterAsTenant";
     private final String LANDLORD_ASSET_ORG = "org.acme.hdb.RegisterAsLandlord";
     private final String CREATE_TENANCY_AGREEMENT_ASSET_ORG = "org.acme.hdb.CreateTenancyAgreement";
@@ -246,7 +245,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         return getHouses.getResultList();
     }
 
-    @Override
+   /* @Override //to be deleted
     public List<TenancyAgreement> retrieveTenancyAgreementByIC(String identificationNumer) {  
 
         //make a call to block chain by passing tenant email and get all the value
@@ -303,7 +302,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                         String tenantIc = tenantResultFromChainCode.getJsonObject(noOfTenant).get("id").toString(); //get from CC\
                         
                         System.out.println("************ TENANT INFORMATION " + tenantEmail + "_ " + tenantFullName + "_ " + tenantIc );
-                        tenants.add(new Tenant(tenantFullName, tenantEmail, tenantIc));
+                       // tenants.add(new Tenant(tenantFullName, tenantEmail, tenantIc));
                         
                     }
 
@@ -359,10 +358,10 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
              tenantTenancies.add(new TenancyAgreement(taId, dateCreated, rentalStart, rentalFee, advanceRentalFee,securityDeposit, tenancyStatus, landlordEmail, houseId,tenants));
              
              
-        }*/
+        }
         return tenantTenancies;
 
-    }
+    }*/
 
     @Override
     public void addNewTenant(HDBlockUserEntity tenant, String tenancyAgreementId) {
@@ -507,61 +506,87 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
     }
 
     
-    @Override
-    public List<TenancyAgreementAsset> retrieveTenancyAgreementByLandlordId(String landlordIC){
-        
-      //  http://localhost:3000/api/queries/GetTenancyAgreementByLandlordId?landlordId=resource%3Aorg.acme.hdb.Landlord%23l1
-           try{
-            
-         String landlordId = "resource%3Aorg.acme.hdb.Landlord%23" + landlordIC;
-         System.out.println("************* LANDLORD ID IS " + landlordId );
-         WebTarget myResource = CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancyAgreementByLandlordId").queryParam("landlordId", landlordId);
-         System.out.println("************************** FULL PATH" + CLIENT.target(COMPOSER_URL).path("api").path("queries").path("GetTenancyAgreementByLandlordId").queryParam("landlordId", landlordId).getUri());
-         Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
-         Response response = invocationBuilder.get();
-         int responseStatus = response.getStatus();
    
-            System.out.println("***************** REPSINE IS  " + response.getStatusInfo());
-         //GETTING TENANT VALUE
+    @Override
+    public List<LandlordTenancyAgreement> retrieveTenancyAgreementByLandlordId(String landlordIC){
+        
+        //  http://localhost:3000/api/queries/GetTenancyAgreementByLandlordId?landlordId=resource%3Aorg.acme.hdb.Landlord%23l1
+        List<LandlordTenancyAgreement> tenancyAgreements = new ArrayList<>();
+        try {
+
+     
+            String methodName = "GetTenancyAgreementByLandlordId";
+            String landlordId = "resource%3Aorg.acme.hdb.Landlord%23" + landlordIC;
+            System.out.println("************* LANDLORD ID IS " + landlordId);
+            WebTarget myResource = CLIENT.target(COMPOSER_URL).path("queries").path(methodName).queryParam("landlordId", landlordId);
+            System.out.println("************************** FULL PATH" + CLIENT.target(COMPOSER_URL).path("api").path("queries").path(methodName).queryParam("landlordId", landlordId).getUri());
+            Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
+            Response response = invocationBuilder.get();
+            int responseStatus = response.getStatus();
+            int noOfTenancyAgreement = 0;
+
+            System.out.println("***************** RESPONSE IS  " + response.getStatusInfo());
             if (responseStatus == 200) {
-                int noOfTa = 0;
-                System.out.println("*****************HELLO ");
+               
                 String tenancyAgreementAssets = invocationBuilder.get(String.class);
                 JsonReader reader = Json.createReader(new StringReader(tenancyAgreementAssets));
                 JsonArray tenancyAgreeemnt = reader.readArray();
-                noOfTa = tenancyAgreeemnt.size();
-                System.out.println("********************** NOOFTA  " + noOfTa );
-                for(int i=0; i<noOfTa; i++){
-//                    
-                  System.out.println("TENANCY ID " + tenancyAgreeemnt.getJsonObject(i).getString("agreementId"));
-                    System.out.println("Date Created " + tenancyAgreeemnt.getJsonObject(i).get("dateCreated"));
-                      System.out.println("start Date " + tenancyAgreeemnt.getJsonObject(i).get("startDate"));
-                        System.out.println("SECURITY DEPOSIT  " + tenancyAgreeemnt.getJsonObject(i).get("securityDeposit"));
-                          System.out.println("ADVANCE RENTAL FEE " + tenancyAgreeemnt.getJsonObject(i).get("advanceRentalFee"));
-                            System.out.println("NO OF TENANTS " + tenancyAgreeemnt.getJsonObject(i).getInt("numOfTenants"));
-//                    userEmail = tenants.getJsonObject(i).getString("email");
-//                    firstName =  tenants.getJsonObject(i).getString("firstName");
-//                    lastName =  tenants.getJsonObject(i).getString("lastName");
-//                    icaStatus =  tenants.getJsonObject(i).getString("ICStatus");
-//                    dob = tenants.getJsonObject(i).getString("DOB");
-                    //dob = tenants.getJsonObject(i).get("lastName");
+                noOfTenancyAgreement = tenancyAgreeemnt.size();
+                System.out.println("********************** NOOFTA  " + noOfTenancyAgreement );
+                for(int i=0; i<noOfTenancyAgreement; i++){
+                  String tenancyAgreementId =  tenancyAgreeemnt.getJsonObject(i).getString("agreementId");
+                  String dateCreated =  tenancyAgreeemnt.getJsonObject(i).get("dateCreated").toString(); //need to substring
+                  String contractStartDate = tenancyAgreeemnt.getJsonObject(i).get("startDate").toString(); /// need to substring
+                  double securityDeposit =  Double.parseDouble(tenancyAgreeemnt.getJsonObject(i).get("securityDeposit").toString());
+                  double advanceRentalFee =  Double.parseDouble(tenancyAgreeemnt.getJsonObject(i).get("advanceRentalFee").toString());
+                  int rentalDuration = tenancyAgreeemnt.getJsonObject(i).getInt("duration");
+                  String contractStatus = tenancyAgreeemnt.getJsonObject(i).getString("status");
+                  JsonArray listOfSignature =  tenancyAgreeemnt.getJsonObject(i).getJsonArray("signatureList");
+                  String houseId = "PLEASE IF POSSIBLE PASS ME JSON OBJECT of HOUSE INFORMATION" ; 
+                  
+                  for(int j=0; j<listOfSignature.size(); j++){
+                    // I NEED TO MAKE A CALL TO GET TENANT INFORMATION BY PASSING SIGNATURE ID .
+                     
+                   //  ONCE I get TENANT ID , I NEED TO QUERY MY DATABASE AGAIN....
+                  }
+                              
+                    LandlordTenancyAgreement ta = new LandlordTenancyAgreement();
+                    tenancyAgreements.add(ta);
                 }
-                    
-                   
-                   
-
-            }else
-            {
-                
             }
+
             
         }catch(Exception ex){
             
          ex.printStackTrace();
         }
-       
+          
+        return tenancyAgreements;
+        
+    }
     
-        return null;
+    @Override
+    public void updateUserIdentity(String userIdentificationNo){
+        
+        try{
+            
+                  HDBlockUserEntity userToBeUpdated = em.find(HDBlockUserEntity.class, userIdentificationNo );
+            
+            if(userToBeUpdated != null)
+            {
+                
+                userToBeUpdated.setStatusIsValid(true);
+                em.flush();
+                
+            }
+        }
+        catch(Exception ex){
+         ex.printStackTrace();
+        }
+
+      
+            
+        
         
     }
     
@@ -572,15 +597,15 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         //return list of signature  each signature (status )
        // http://localhost:3000/api/queries/GetTenancySignatureByTenantId?tenantId="resource:org.acme.hdb.Tenant#t1\
        
-         String tenantFullIC = "resource%3Aorg.acme.hdb.Tenant%23" + tenantIc;
-         System.out.println("************* TENANT ID IS " + tenantFullIC );
-         WebTarget myResource = CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", tenantFullIC);
+         String tenantFullIC_Path = "resource%3Aorg.acme.hdb.Tenant%23" + tenantIc;
+         System.out.println("************* TENANT ID IS " + tenantFullIC_Path );
+         WebTarget myResource = CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", tenantFullIC_Path);
          System.out.println("************************** FULL PATH" + CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", tenantIc).getUri());
          Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
          Response response = invocationBuilder.get();
          int responseStatus = response.getStatus();
    
-            System.out.println("***************** REPSINE IS  " + response.getStatusInfo());
+            System.out.println("***************** Response IS  " + response.getStatusInfo());
          //GETTING TENANT VALUE
             if (responseStatus == 200) {
                  int noOfTs = 0;

@@ -1,10 +1,97 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./template/userMasterPage.xhtml">
+                template="./template/userMasterPage.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
 
+          <h:form id="form">
+
+            <p:growl id="msgs" showDetail="true" />
+            <p:dataTable id="tenancyAgreementTable" var="tenancy" value="#{tenancyAgreementManagedBean.tenancyAgreements}">
+                <f:facet name="header">
+                    <h1> Your Tenancy Agreement </h1>
+                </f:facet>
+                <p:column headerText="Id">
+                    <h:outputText value="#{tenancy.tenancyAgreementId}" />
+                </p:column>
+                <p:column headerText="Date Created">
+                    <h:outputText value="#{tenancy.dateCreated}" />
+                </p:column>
+                <p:column headerText="Rental Start Date">
+                    <h:outputText value="#{tenancy.startDate}" />
+                </p:column>
+                <p:column headerText="Last Name">
+                    <h:outputText value="#{tenancy.contractStatus}" />
+                </p:column>
+                <p:column style="width:32px;text-align: center">
+                    <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('tenancyDetailedDialog').show()"  title="View">
+                        <f:setPropertyActionListener value="#{tenancy}" target="#{tenancyAgreementManagedBean.selectedTenancy}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:dialog header="Detailed Tenancy Information" appendTo="@(body)"  widgetVar="requestDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500px" height="350px">
+           
+
+                <h2>Tenancy Agreement</h2>
+                <p:panelGrid columns="2" >
+                  
+                    <h:outputText value="Tenancy Agreement ID: " />
+                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.tenancyAgreementId}" />
+
+                    <h:outputText value="Date Created: " />
+                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.dateCreated}" />
+
+                    <h:outputText value="Rental Start Date" />
+                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.startDate}"/>
+                    
+                    <h:outputText value="Monthly Rental Fee($)" />
+                    <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.rentalFee}"/>
+                    
+                    <h:outputText value="Advance Rental Fee Paid($)" />
+                    <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.advanceRentalFee}"/>
+                    
+                    <h:outputText value="Security Deposit Paid($)" />
+                    <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.securityDeposit}"/>
+                       
+                    <h:outputText value="Contract Status" />
+                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.contractStatus}"/>
+             
+                </p:panelGrid>
+                
+                  <h2>Tenant Information</h2>           
+                  <p:repeat value="#{tenancyAgreementManagedBean.selectedTenancy.tenants}" var="tenant">
+
+                      <h:panelGrid columns="2" cellpadding="5">
+
+                            <p:outputPanel>
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <h:outputText value="Tenant Name: " style="font-weight: bold" />
+                                    <h:outputText value="#{tenant.firstName} #{tenant.lastName}" />
+
+                                    <h:outputText value="Tenant Email: " style="font-weight: bold" />
+                                    <h:outputText value="#{tenant.email}" />
+                                    
+                                     <h:outputText value="Tenant Email: " style="font-weight: bold" />
+                                    <h:outputText value="#{tenant.email}"/>
+                                       
+                                    <h:outputText value="Tenant Status " style="font-weight: bold" />
+                                    <h:outputText value="#{tenant.tenantStatus}"/>
+                  
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:repeat>
+
+            </p:dialog>
+
+        </h:form>
+        
+        
     </ui:define>
 
 </ui:composition>
