@@ -87,7 +87,7 @@ public class ICAIdentityManagedBean implements Serializable {
     public void processIdentity(){
         
         try{
-            
+           System.out.println("************ selected user is" + selectedUser.getEmail());
            boolean statusIsApproved = iCAControllerLocal.processUserIdentity(selectedUser);
            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
            if(statusIsApproved){
@@ -112,12 +112,16 @@ public class ICAIdentityManagedBean implements Serializable {
     
     public void finalProcessIdentity(String result){
         
-        boolean processHasSucceeded = iCAControllerLocal.processUserIdentity(selectedUser.getIdentificationNo(), selectedUser.getUserType(), result);
+        System.out.println("*********** RESULT " + result + selectedUser.getEmail());
+         FacesContext context = FacesContext.getCurrentInstance();
+        
+        context.addMessage(null, new FacesMessage("Successful",  "Your message: " + result) );
+       /* boolean processHasSucceeded = iCAControllerLocal.finalProcessUserIdentity(selectedUser.getIdentificationNo(), selectedUser.getUserType(), result);
         if(processHasSucceeded){
             identityMessage = "User Identity " + selectedUser.getIdentificationNo() + "Has Been ENDORSED.";
         }else{
            identityMessage = "Error has occured while endorsing the user. Please contact Admin";
-        }
+        }*/
                //make another call
             
           

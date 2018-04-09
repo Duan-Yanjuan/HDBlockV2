@@ -32,7 +32,7 @@ participant HDBlock identified by HDBlockId {
     --> Tenant[] tenantList
     --> Landlord[] landlordList
 }
-
+//end of participant
 
 // Assets
 abstract asset Client identified by id {
@@ -41,7 +41,7 @@ abstract asset Client identified by id {
     o String firstName
     o String lastName
     o String DOB
-    o String ICStatus default = "Pending"  //PENDING, VALID, INVALID
+    o String ICStatus default = "Pending"  //Pending, Valid, Invalid
 }
 
 asset Landlord extends Client {
@@ -55,7 +55,7 @@ asset Tenant extends Client {
 asset House identified by houseId {
     o String houseId // format: Postal code + Unit
     o String address
-    o String status default = "Pending" // pending, rented, available, invalid/banned
+    o String status default = "Pending" // Pending, Rented, Available, Invalid
     o String type // choose from a list of values
     --> Landlord landlord
     --> Tenant[] tenants optional
@@ -64,20 +64,19 @@ asset House identified by houseId {
 asset TenancyAgreement identified by agreementId {
     o String agreementId // format: postal code + unitNo. + date created (e.g. 53070909108_01012018)
     o DateTime dateCreated
-    o DateTime startDate //start rental date, check whether need this
+    o DateTime startDate //start rental date
     o DateTime endDate optional //can delete
     o Integer duration //number of days e.g. 180 days
     o Double securityDeposit   // check what is this  can delete
     o Double advanceRentalFee  // check whether need this   can delete
     o Double rentalFee
-    o String status default = "Pending" // pending, signed, active, end, invalid
+    o String status default = "Pending" // Pending, Signed, Active, End, Invalid
     o Integer numOfTenants default = 0
     o Boolean isStampDutyPaid default = false
     --> StampCertificate stampCertificate optional
     --> House house
     --> Landlord landlord
     --> TenancySignature[] signatureList optional
- //     --> Tenant[] tenants
 }
 
 // New assets of tenancy signature will be created when landlord created and signed the tenancy agreement, or update tenants
@@ -104,11 +103,9 @@ asset DepositRecord identified by recordId {
     --> Tenant tenant
     --> House house
 }
+//end of asset
 
 // Transactions
-
-//!!! in report, should delete "wallet" attribute
-//status is default: PENDING
 transaction RegisterAsTenant {
     o String id
     o String email
@@ -117,8 +114,6 @@ transaction RegisterAsTenant {
     o String DOB
 }
 
-//!!! in report, should delete "wallet" attribute
-//status is default: PENDING
 transaction RegisterAsLandlord {
     o String id
     o String email
@@ -127,8 +122,6 @@ transaction RegisterAsLandlord {
     o String DOB
 }
   
-// check whether should use reference for havent-created asset (house) --> i think should not
-// try houseRegistry.create(house);
 transaction RegisterHouse {
     o String houseId
     o String address
@@ -136,7 +129,6 @@ transaction RegisterHouse {
     --> Landlord landlord
 } 
 
-//!!! in report, ApproveTenantIdentity and ApproveLandlordIdentity have wrong arguments (need to swap)
 transaction ApproveTenantIdentity {
     --> Tenant tenant
 }
@@ -181,13 +173,11 @@ transaction SignTenancyAgreement {
     --> TenancySignature signature
 }
 
-  
 transaction UpdateTenancyAgreement {
     -->TenancyAgreement agreement
     --> Tenant[] tenants
 }
-  
-//!!! in report, change "landlord" argument into "tenant"
+
 transaction PayStampDuty {
     o String certificateId
     o Double amount
@@ -197,8 +187,10 @@ transaction PayStampDuty {
   
   
   
-  
-// left to be done
+/*
+// left to be done  
+
+
 transaction ActivateTenancyAgreement {
 }
   
@@ -234,8 +226,5 @@ transaction RetrieveTenancyAgreementByLandlord {
     --> Landlord landlord
     --> TenancyAgreement[] agreementList
 }
-  
-/*
-transaction GetAllPendingTenants {
-}
 */
+  
