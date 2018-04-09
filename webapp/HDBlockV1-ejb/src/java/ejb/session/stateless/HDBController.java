@@ -5,12 +5,11 @@
  */
 package ejb.session.stateless;
 
-import datamodel.ws.HouseAsset;
 import datamodel.ws.HouseAssetUpdate;
 import entity.HDBStaffEntity;
 import entity.HDBRentingPolicyEntity;
 import entity.HDBHouseEntity;
-import entity.HDBlockUserEntity;
+import entity.HDBHouseOwnerRecordEntity;
 import util.helperclass.PendingHouse;
 import java.io.StringReader;
 import javax.ejb.Stateless;
@@ -22,7 +21,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonReader;
@@ -303,7 +301,17 @@ public class HDBController implements HDBControllerLocal {
             }
                
        }
-    
+       
+       
+       
+       @Override
+       public HDBHouseOwnerRecordEntity createNewOwner(HDBHouseOwnerRecordEntity newOwner){
+           
+           em.persist(newOwner);
+           em.flush();
+           em.refresh(newOwner);
+           return newOwner;
+       }    
     
     
     

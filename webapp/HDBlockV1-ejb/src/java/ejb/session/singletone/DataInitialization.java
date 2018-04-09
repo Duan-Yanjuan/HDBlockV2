@@ -5,16 +5,17 @@
  */
 package ejb.session.singletone;
 
+import ejb.session.stateless.HDBControllerLocal;
 import ejb.session.stateless.HDBlockUserEntityControllerLocal;
 import ejb.session.stateless.ICAControllerLocal;
 import entity.HDBHouseEntity;
+import entity.HDBHouseOwnerRecordEntity;
 import entity.HDBlockUserEntity;
 import entity.ICAIdentificationRecordEntity;
 import entity.ICAStaffEntity;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -34,11 +35,16 @@ import util.exception.UserNotFoundException;
 @LocalBean
 public class DataInitialization {
 
+    @EJB(name = "HDBControllerLocal")
+    private HDBControllerLocal hDBControllerLocal;
+
     @EJB(name = "ICAControllerLocal")
     private ICAControllerLocal iCAControllerLocal;
 
     @EJB(name = "HDBlockUserEntityControllerLocal")
     private HDBlockUserEntityControllerLocal hDBlockUserEntityControllerLocal;
+    
+    
 
     public DataInitialization() {
     }
@@ -66,6 +72,9 @@ public class DataInitialization {
             //  hDBlockUserEntityControllerLocal.retrieveTenancyAgreementByLandlordId("S1234567P");
            //   hDBlockUserEntityControllerLocal.retrieveTenancySinatureByTenantId("S9876541G");
 
+           HDBHouseOwnerRecordEntity owner1 = new HDBHouseOwnerRecordEntity("Hougang Avenue 1", "#11-121" , "531012" , "2 Room Flat" , "Mary Tan" , "S1234567P");
+           hDBControllerLocal.createNewOwner(owner1);
+           
             if(hDBlockUserEntityControllerLocal.retrieveAllUser().isEmpty()){
                 
                 System.out.println("********** EMPTY");

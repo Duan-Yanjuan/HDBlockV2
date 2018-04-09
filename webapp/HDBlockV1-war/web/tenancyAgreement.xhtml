@@ -11,7 +11,7 @@
         
        
             <p:tabView dynamic="true" cache="true" effect="fold">
-                <p:tab rendered="#{not empty tenancyAgreementManagedBean.landlordHouseInformation}" title="Create New Tenancy Agreement">
+                <p:tab title="Create New Tenancy Agreement">
                     
                         <h:panelGrid columns="2" cellpadding="10">
                         <h:form id="createTaForm"> 
@@ -78,7 +78,7 @@
                         <h:form id="form">
 
                          <p:growl id="msgs" showDetail="true" />
-                          <p:dataTable id="tenancyAgreementTable" var="tenancy" value="#{tenancyAgreementManagedBean.tenancyAgreements}">
+                         <p:dataTable id="tenancyAgreementTable" var="tenancy" value="#{tenancyAgreementManagedBean.landlordTenancyAgreements}">
                  <f:facet name="header">
                     <h1> Your Tenancy Agreement </h1>
                 </f:facet>

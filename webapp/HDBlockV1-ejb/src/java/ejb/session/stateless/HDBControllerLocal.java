@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.HDBStaffEntity;
 import entity.HDBRentingPolicyEntity;
 import entity.HDBHouseEntity;
+import entity.HDBHouseOwnerRecordEntity;
 import entity.HDBlockUserEntity;
 import javax.ejb.Local;
 import java.util.List;
@@ -35,6 +36,8 @@ public interface HDBControllerLocal {
     public List<PendingHouse> retrieveHouseWithPendingStatus();
     public List<HDBHouseEntity> retrieveAllHouses();
     public boolean processHouseValidity(PendingHouse house) throws HDBRecordNotFoundException;
+
+    public HDBHouseOwnerRecordEntity createNewOwner(HDBHouseOwnerRecordEntity newOwner);
     
     
     

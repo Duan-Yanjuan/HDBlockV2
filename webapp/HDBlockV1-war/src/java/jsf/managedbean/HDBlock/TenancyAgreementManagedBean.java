@@ -53,6 +53,7 @@ public class TenancyAgreementManagedBean implements Serializable {
     
     public TenancyAgreementManagedBean() {
         landlordTenancyAgreements = new ArrayList<>();
+        tenantTenancyAgreements = new ArrayList<>();
         selectedTenancy = new LandlordTenancyAgreement();
         taAsset = new TenancyAgreementAsset();
         tenants = new ArrayList<>();
