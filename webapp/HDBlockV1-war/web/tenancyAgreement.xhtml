@@ -8,11 +8,20 @@
 
     <ui:define name="content">
 
-          <h:form id="form">
+        
+          <h3>Tenancy Agreement</h3>
+            <p:tabView dynamic="true" cache="true" effect="fold">
+                <p:tab title="Register New House">
 
-            <p:growl id="msgs" showDetail="true" />
-            <p:dataTable id="tenancyAgreementTable" var="tenancy" value="#{tenancyAgreementManagedBean.tenancyAgreements}">
-                <f:facet name="header">
+                    <p:messages id="register_error_messages" closable="true"></p:messages>
+
+                    <h:panelGrid columns="2" cellpadding="10">
+
+                        <h:form id="form">
+
+                         <p:growl id="msgs" showDetail="true" />
+                          <p:dataTable id="tenancyAgreementTable" var="tenancy" value="#{tenancyAgreementManagedBean.tenancyAgreements}">
+                 <f:facet name="header">
                     <h1> Your Tenancy Agreement </h1>
                 </f:facet>
                 <p:column headerText="Id">
@@ -92,6 +101,59 @@
         </h:form>
         
         
+                       
+                    </h:panelGrid>
+
+                </p:tab>
+                <p:tab title="View My House">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:form id="viewHouse"> 
+                            <p:dataScroller style="border: 0px !important;" value="#{houseManagedBean.houses}" var="landlordHouse" chunkSize="10" >
+
+                                <h:panelGrid columns="2" style="width:100%" cellpadding="25"  columnClasses="logo,detail">
+                                    <p:graphicImage name="/images/HDB.jpg" width="200px" height="200px" /> 
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                         
+
+                                            <h:outputText value="Address:" />
+                                            <h:outputText value="#{landlordHouse.address}" style="font-weight: bold"/>
+
+                                            <h:outputText value="Unit: " />
+                                            <h:outputText value="#{landlordHouse.unitNumber}" style="font-weight: bold"/>
+
+
+                                            <h:outputText value="Postal Code: " />
+                                            <h:outputText value="#{landlordHouse.postalCode}" style="font-weight: bold"/>
+
+
+                                            <h:outputText value="Flat Type" />
+                                            <h:outputText value="#{landlordHouse.flatType}" style="font-weight: bold"/>
+
+                                            <h:outputText value="Rental Fee($)/Month" />
+                                            <h:outputText value="#{landlordHouse.rentalPrice}" style="font-weight: bold"/>
+
+                                            <h:outputText value="Current Status" />
+                                            <h:outputText rendered="#{!landlordHouse.statusIsValid}" value="Waiting for Approval" style="font-weight: bold"/>
+                                            <h:outputText rendered="#{landlordHouse.statusIsValid}" value="Occupied" style="font-weight: bold"/>
+                                            
+                                            <p:selectBooleanButton rendered="#{houseManagedBean.rentalStatus != 'occupied'}"  id="udpateButton" value="#{selectBooleanView.value2}" onLabel="edit" offLabel="Update" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px">
+                                                <p:ajax listener="#{selectBooleanView.addMessage}" />
+                                            </p:selectBooleanButton>
+
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+                                </h:panelGrid>
+                            </p:dataScroller>
+                        </h:form>
+                    </h:panelGrid>
+                </p:tab>
+
+            </p:tabView>
+
+        </h:form>
+          
     </ui:define>
 
 </ui:composition>

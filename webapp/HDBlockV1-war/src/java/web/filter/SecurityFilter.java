@@ -47,7 +47,7 @@ public class SecurityFilter  implements Filter {
         Boolean staffIsLogin = false;
         Boolean userIsLogin = false;
   
-        System.out.println("********** DO FILTER ");
+        System.out.println("********** DO FILTER " +  requestServletPath);
         
         if(httpSession.getAttribute("userIsLogin") == null)
         {
@@ -102,7 +102,7 @@ public class SecurityFilter  implements Filter {
        
         if(path.equals("/Login.xhtml") ||  path.equals("/error.xhtml") || path.equals("/ICAStaffLogin.xhtml") ||
                 path.equals("/ICAStaffHome.xhtml")  || path.equals("/ICAStaffIdentityApproval.xhtml") ||  path.equals("/HDBStaffHome.xhtml") || path.equals("/HDBStaffLogin.xhtml")||
-                path.equals("HDBStaffHouseApproval.xhtml") || path.equals("/HDBStaffPolicy.xhtml") ||
+                path.equals("/HDBStaffHouseApproval.xhtml") || path.equals("/HDBStaffPolicy.xhtml") ||
                 path.startsWith("/images") ||   path.startsWith("/javax.faces.resource"))
         {
             return true;
