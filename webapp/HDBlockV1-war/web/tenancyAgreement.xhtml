@@ -9,13 +9,71 @@
     <ui:define name="content">
 
         
-          <h3>Tenancy Agreement</h3>
+       
             <p:tabView dynamic="true" cache="true" effect="fold">
-                <p:tab title="Register New House">
+                <p:tab rendered="#{not empty tenancyAgreementManagedBean.landlordHouseInformation}" title="Create New Tenancy Agreement">
+                    
+                        <h:panelGrid columns="2" cellpadding="10">
+                        <h:form id="createTaForm"> 
+                            
+                               <p:messages id="register_error_messages" closable="true"></p:messages>
+                        
+               
+                                    <h:panelGrid columns="2" style="width:100%" cellpadding="25"  columnClasses="logo,detail">
+                                        <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputLabel style="font-weight: bold; font-size:large;"   value="Create Tenancy Agreement" />
+                                           <h:outputLabel  value="" />
+                                           <h:outputLabel for="house" value="Select House" />
+                                           <p:inputText id="house"   value="#{tenancyAgreementManagedBean.landlordHouseInformation.address}" readonly="true" label="House" />
 
-                    <p:messages id="register_error_messages" closable="true"></p:messages>
+                                            <h:outputLabel for="rentalStart" value="Rental Start Date: " />
+                                            <p:calendar id="rentalStart" value="#{tenancyAgreementManagedBean.taAsset.startDate}" mindate="today" label="Start Date" navigator="true" pattern="yyyy-MM-dd" yearRange="c-70:c+10" />
 
-                    <h:panelGrid columns="2" cellpadding="10">
+                                            
+                                            
+                                            <h:outputLabel for="rentalDuration" value="Rental Duration: " />
+                                            <p:inputText id="rentalDuration"  value="#{tenancyAgreementManagedBean.taAsset.duration}" label="Rental Duration" />
+
+                                               <h:outputLabel for="securityDeposit" value="Security Deposit($): " />
+                                               <p:inputText id="securityDeposit"  value="#{tenancyAgreementManagedBean.taAsset.securityDeposit}" label="Security Deposit" />
+
+                                               <h:outputLabel for="advanceRental" value="Advance Rental Fee($): " />
+                                               <p:inputText id="advanceRental"  value="#{tenancyAgreementManagedBean.taAsset.advanceRentalFee}" label="Advance Rental Fee" />
+
+                                            <h:outputLabel for="rentalFee" value="Rental Fee($): " />
+                                            <p:inputText id="rentalFee"  value="#{tenancyAgreementManagedBean.taAsset.rentalFee}" label="Rental Fee" />
+                                            
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+                                </h:panelGrid>
+                            
+                            
+                               <p:commandButton  style="margin-left:30px;" process="pg_tenants @this" value="Add New tenant" actionListener="#{tenancyAgreementManagedBean.add_tenant}" update="pg_tenants"/>
+                            <h:panelGrid style="margin-left:10px;"  columns="2" cellspacing="10"  id="pg_tenants" >
+                             <br />
+                             <ui:repeat value="#{tenancyAgreementManagedBean.tenants}" var="tenant" varStatus="sizeStatus">
+                                 <h:outputLabel value="Tenants IC: " />
+                                 <p:inputText value="#{tenant.ic}" />&nbsp;&nbsp;&nbsp;
+                                 <br/>
+                                 <br/>
+                             </ui:repeat>
+                                
+                                                         
+                        </h:panelGrid>
+                            
+                            <h:panelGrid columns="1" style="width:100%">
+                                <p:commandButton value="Submit Tenancy Agreemenet" action="#{tenancyAgreementManagedBean.submitTa}"  process="createTaForm" update="@form" />
+                            </h:panelGrid>
+                                
+              
+                        </h:form>
+                    </h:panelGrid>
+
+                              
+                </p:tab>
+                <p:tab title="View Tenancy Agreement">
+                      <h:panelGrid columns="2" cellpadding="10">
 
                         <h:form id="form">
 
@@ -44,8 +102,6 @@
             </p:dataTable>
 
             <p:dialog header="Detailed Tenancy Information" appendTo="@(body)"  widgetVar="requestDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500px" height="350px">
-           
-
                 <h2>Tenancy Agreement</h2>
                 <p:panelGrid columns="2" >
                   
@@ -103,57 +159,10 @@
         
                        
                     </h:panelGrid>
-
-                </p:tab>
-                <p:tab title="View My House">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:form id="viewHouse"> 
-                            <p:dataScroller style="border: 0px !important;" value="#{houseManagedBean.houses}" var="landlordHouse" chunkSize="10" >
-
-                                <h:panelGrid columns="2" style="width:100%" cellpadding="25"  columnClasses="logo,detail">
-                                    <p:graphicImage name="/images/HDB.jpg" width="200px" height="200px" /> 
-
-                                    <p:outputPanel>
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                         
-
-                                            <h:outputText value="Address:" />
-                                            <h:outputText value="#{landlordHouse.address}" style="font-weight: bold"/>
-
-                                            <h:outputText value="Unit: " />
-                                            <h:outputText value="#{landlordHouse.unitNumber}" style="font-weight: bold"/>
-
-
-                                            <h:outputText value="Postal Code: " />
-                                            <h:outputText value="#{landlordHouse.postalCode}" style="font-weight: bold"/>
-
-
-                                            <h:outputText value="Flat Type" />
-                                            <h:outputText value="#{landlordHouse.flatType}" style="font-weight: bold"/>
-
-                                            <h:outputText value="Rental Fee($)/Month" />
-                                            <h:outputText value="#{landlordHouse.rentalPrice}" style="font-weight: bold"/>
-
-                                            <h:outputText value="Current Status" />
-                                            <h:outputText rendered="#{!landlordHouse.statusIsValid}" value="Waiting for Approval" style="font-weight: bold"/>
-                                            <h:outputText rendered="#{landlordHouse.statusIsValid}" value="Occupied" style="font-weight: bold"/>
-                                            
-                                            <p:selectBooleanButton rendered="#{houseManagedBean.rentalStatus != 'occupied'}"  id="udpateButton" value="#{selectBooleanView.value2}" onLabel="edit" offLabel="Update" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px">
-                                                <p:ajax listener="#{selectBooleanView.addMessage}" />
-                                            </p:selectBooleanButton>
-
-                                        </h:panelGrid>
-                                    </p:outputPanel>
-                                </h:panelGrid>
-                            </p:dataScroller>
-                        </h:form>
-                    </h:panelGrid>
                 </p:tab>
 
             </p:tabView>
 
-        </h:form>
-          
     </ui:define>
 
 </ui:composition>

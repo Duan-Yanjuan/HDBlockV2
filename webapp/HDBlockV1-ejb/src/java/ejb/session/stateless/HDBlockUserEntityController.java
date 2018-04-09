@@ -662,15 +662,15 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
     
     
     @Override
-    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration , double securityDeposit , double advanceRentalFee, double rentalFee, String[] tenantsId , String houseId ){
+    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration , double securityDeposit , double advanceRentalFee, double rentalFee, String[] tenantsId , String tenancyId ){
         
-        String houseID_Formatted = houseId ;
+        String houseID_Formatted = "house1234" ;
         System.out.println("*********** Creating Tenancy Agreement");
         WebTarget myResource;
         Response createTenancyAgreementResponse;
         int responseStatus = 0;
         myResource = CLIENT.target(COMPOSER_URL).path(CREATE_TENANCY_AGREEMENT_ASSET_ORG);
-        TenancyAgreementAsset taAsset = new TenancyAgreementAsset(CREATE_TENANCY_AGREEMENT_ASSET_ORG, "AGREMENT_IDTEST131", rentalStartDate, rentalDuration, securityDeposit, advanceRentalFee, rentalFee, tenantsId, houseId);
+        TenancyAgreementAsset taAsset = new TenancyAgreementAsset(CREATE_TENANCY_AGREEMENT_ASSET_ORG, tenancyId, rentalStartDate, rentalDuration, securityDeposit, advanceRentalFee, rentalFee, tenantsId, houseID_Formatted);
 
         createTenancyAgreementResponse = myResource.request().post(Entity.json(taAsset));
         responseStatus = createTenancyAgreementResponse.getStatus();

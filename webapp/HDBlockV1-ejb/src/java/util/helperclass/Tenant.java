@@ -16,6 +16,7 @@ public class Tenant {
     private String lastName;
     private String email;
     private String tenantStatus;
+    private String ic;
 
     public Tenant() {
     }
@@ -26,6 +27,16 @@ public class Tenant {
         this.email = email;
         this.tenantStatus = tenantStatus;
     }
+
+    public Tenant(String firstName, String lastName, String email, String tenantStatus, String ic) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.tenantStatus = tenantStatus;
+        this.ic = ic;
+    }
+    
+    
 
 
     /**
@@ -82,6 +93,20 @@ public class Tenant {
      */
     public void setTenantStatus(String tenantStatus) {
         this.tenantStatus = tenantStatus;
+    }
+
+    /**
+     * @return the ic
+     */
+    public String getIc() {
+        return ic;
+    }
+
+    /**
+     * @param ic the ic to set
+     */
+    public void setIc(String ic) {
+        this.ic = ic;
     }
 
   

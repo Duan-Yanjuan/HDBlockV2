@@ -5,17 +5,26 @@
  */
 package jsf.managedbean.HDBlock;
 
+import datamodel.ws.TenancyAgreementAsset;
 import ejb.session.stateless.HDBlockUserEntityControllerLocal;
+import entity.HDBHouseEntity;
 import entity.HDBlockUserEntity;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import util.helperclass.LandlordTenancyAgreement;
+import util.helperclass.Tenant;
+import util.helperclass.TenantTenancyAgreement;
 
 /**
  *
@@ -32,36 +41,97 @@ public class TenancyAgreementManagedBean implements Serializable {
      * Creates a new instance of TenancyAgreementManagedBean
      */
     
-    
-    private List<LandlordTenancyAgreement> tenancyAgreements;
+    private String newTenant;
+    private List<Tenant> tenants;
+    private TenancyAgreementAsset taAsset;
+    private HDBHouseEntity landlordHouseInformation;
+  
+    //for retrieval
+    private List<LandlordTenancyAgreement> landlordTenancyAgreements;
+    private List<TenantTenancyAgreement> tenantTenancyAgreements;
     private LandlordTenancyAgreement selectedTenancy;
     
     public TenancyAgreementManagedBean() {
-        tenancyAgreements = new ArrayList<>();
+        landlordTenancyAgreements = new ArrayList<>();
         selectedTenancy = new LandlordTenancyAgreement();
+        taAsset = new TenancyAgreementAsset();
+        tenants = new ArrayList<>();
+        landlordHouseInformation = new HDBHouseEntity();
     }
     
     @PostConstruct
     public void postConstruct(){
         
-        HDBlockUserEntity userInformation = (HDBlockUserEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userInformation");
-       tenancyAgreements = hDBlockUserEntityControllerLocal.retrieveTenancyAgreementByLandlordId(userInformation.getIdentificationNo());
+        boolean isLandlord = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLandlord");
+        HDBlockUserEntity userInfo = (HDBlockUserEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userInformation");
+        boolean isTenant = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isTenant");
+        
+      
+        if(isLandlord){
+              System.out.println("******** EMAIL IS " + userInfo.getEmail() ); 
+              landlordHouseInformation = hDBlockUserEntityControllerLocal.retrieveLandlordHouseByEmail(userInfo.getEmail()).get(0);
+              landlordTenancyAgreements =  hDBlockUserEntityControllerLocal.retrieveTenancyAgreementByLandlordId(userInfo.getIdentificationNo());
+            System.out.println("******** House IS " + landlordHouseInformation.getPostalCode()); 
+            System.out.println("******** House IS " + landlordHouseInformation.getAddress()); 
+        }else if(isTenant){
+           //tenantTenancyAgreements = hDBlockUserEntityControllerLocal.retrieveTenancySinatureByTenantId(userInfo.getIdentificationNo());
+        }
+        
+     
+        
+        
+      //  HDBlockUserEntity userInformation = (HDBlockUserEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userInformation");
+     //   tenancyAgreements = hDBlockUserEntityControllerLocal.retrieveTenancyAgreementByLandlordId(userInformation.getIdentificationNo());
        
     }
+    
+     public void add_tenant(ActionEvent event){
+       tenants.add(new Tenant());
+       System.out.println("********** TENANT SIZE " + tenants.size() + " tenant is " + tenants.get(0));
+     }
+     
+     public void submitTa(){
+         
+            
+          // 53070909108_01012018)
+        
+          SimpleDateFormat sdfRental = new SimpleDateFormat("yyyy-MM-dd");
+          Date rentalDate = taAsset.getStartDate();
+         
+          
+          Date todayDate = new Date();
+          DateFormat df = new SimpleDateFormat("dd/MM/yyyy");      
+          String todayDateString = df.format(todayDate);
+          System.out.println("*************** todatDate " + todayDateString );
+          String [] todayDateFormated = todayDateString.split("/");
 
-    /**
-     * @return the tenancyAgreements
-     */
-    public List<LandlordTenancyAgreement> getTenancyAgreements() {
-        return tenancyAgreements;
-    }
-
-    /**
-     * @param tenancyAgreements the tenancyAgreements to set
-     */
-    public void setTenancyAgreements(List<LandlordTenancyAgreement> tenancyAgreements) {
-        this.tenancyAgreements = tenancyAgreements;
-    }
+              String [] tenantsId = new String[tenants.size()];
+              for(int i=0; i<tenants.size(); i++){
+                  System.out.println(tenants.get(i));
+                  tenantsId[i] = tenants.get(i).getIc();
+                  System.out.println("YENANT ID IS " + tenants.get(i).getIc());
+              }
+               System.out.println("********** RENTAL DATE " + rentalDate);
+              String tenancyId = landlordHouseInformation.getPostalCode() + landlordHouseInformation.getUnitNumber().substring(1) +  todayDateFormated[0] + todayDateFormated[1] + todayDateFormated[2]   ;
+              System.out.println("Tenancy ID " + tenancyId);
+            //hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate, 2, 3000, 1500, 1500, tenantsId, houseId);
+          // String houseId = "";
+          //  public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration, double securityDeposit, double advanceRentalFee, double rentalFee, String[] tenantsId, String houseId);
+            System.out.println("********** SUBMIT" +  tenants.size() + taAsset.getRentalFee());
+           boolean createResult =  hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate,  taAsset.getDuration() , taAsset.getSecurityDeposit(), taAsset.getAdvanceRentalFee(), taAsset.getRentalFee(), tenantsId, tenancyId);
+           if(true){
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Tenancy Agreement is created succesfully", null));
+                    
+           }else{
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to Create tenancy agreement. Contact Admin", null));
+           }
+        
+           setLandlordTenancyAgreements(new ArrayList<>());
+        selectedTenancy = new LandlordTenancyAgreement();
+        taAsset = new TenancyAgreementAsset();
+        tenants = new ArrayList<>();
+        
+     }
 
     /**
      * @return the selectedTenancy
@@ -76,5 +146,86 @@ public class TenancyAgreementManagedBean implements Serializable {
     public void setSelectedTenancy(LandlordTenancyAgreement selectedTenancy) {
         this.selectedTenancy = selectedTenancy;
     }
+
+    /**
+     * @return the taAsset
+     */
+    public TenancyAgreementAsset getTaAsset() {
+        return taAsset;
+    }
+
+    /**
+     * @param taAsset the taAsset to set
+     */
+    public void setTaAsset(TenancyAgreementAsset taAsset) {
+        this.taAsset = taAsset;
+    }
+
+    /**
+     * @return the newTenant
+     */
+    public String getNewTenant() {
+        return newTenant;
+    }
+
+    /**
+     * @param newTenant the newTenant to set
+     */
+    public void setNewTenant(String newTenant) {
+        this.newTenant = newTenant;
+    }
+
+    public List<Tenant> getTenants() {
+        return tenants;
+    }
+
+    public void setTenants(List<Tenant> tenants) {
+        this.tenants = tenants;
+    }
+
+    
+    /**
+     * @return the landlordHouseInformation
+     */
+    public HDBHouseEntity getLandlordHouseInformation() {
+        return landlordHouseInformation;
+    }
+
+    /**
+     * @param landlordHouseInformation the landlordHouseInformation to set
+     */
+    public void setLandlordHouseInformation(HDBHouseEntity landlordHouseInformation) {
+        this.landlordHouseInformation = landlordHouseInformation;
+    }
+
+    /**
+     * @return the landlordTenancyAgreements
+     */
+    public List<LandlordTenancyAgreement> getLandlordTenancyAgreements() {
+        return landlordTenancyAgreements;
+    }
+
+    /**
+     * @param landlordTenancyAgreements the landlordTenancyAgreements to set
+     */
+    public void setLandlordTenancyAgreements(List<LandlordTenancyAgreement> landlordTenancyAgreements) {
+        this.landlordTenancyAgreements = landlordTenancyAgreements;
+    }
+
+    /**
+     * @return the tenantTenancyAgreements
+     */
+    public List<TenantTenancyAgreement> getTenantTenancyAgreements() {
+        return tenantTenancyAgreements;
+    }
+
+    /**
+     * @param tenantTenancyAgreements the tenantTenancyAgreements to set
+     */
+    public void setTenantTenancyAgreements(List<TenantTenancyAgreement> tenantTenancyAgreements) {
+        this.tenantTenancyAgreements = tenantTenancyAgreements;
+    }
+
+ 
     
 }
