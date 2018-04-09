@@ -165,6 +165,7 @@ public class HDBController implements HDBControllerLocal {
          int noOfHouses = 0;
          String houseId = "";
          String type = "";
+         String address = "";
          String status = "";
          String landlord = "";
             
@@ -177,18 +178,20 @@ public class HDBController implements HDBControllerLocal {
                 
                 for(int i=0; i<noOfHouses; i++){
                     
-                    houseId = houses.getJsonObject(i).getString("id");
+                    houseId = houses.getJsonObject(i).getString("houseId");
                     type = houses.getJsonObject(i).getString("type");
+                    address = houses.getJsonObject(i).getString("address");
                     status =  houses.getJsonObject(i).getString("status");
                     landlord =  houses.getJsonObject(i).getString("landlord");
                    
                     
                     if(status.equals("Pending")){  
-                         housesWithPendingStatus.add(new PendingHouse(i+1, houseId, type, landlord));
+                         housesWithPendingStatus.add(new PendingHouse(i+1, houseId, type, address, landlord));
                     }
                 
                     System.out.println("**************** House ID[" + i + "] is " + houseId );
                     System.out.println("**************** Flat Type[" + i + "] is " + type);
+                    System.out.println("**************** Address[" + i + "] is " + address);
                     System.out.println("**************** Status[" + i + "] is " + status);
                     System.out.println("**************** Landlord[" + i + "] is " + landlord);
 
@@ -222,17 +225,17 @@ public class HDBController implements HDBControllerLocal {
  
         String houseId = "";
         String type  ="";
-        String landlord = "";
+        String landlordNRIC = "";
         
         try{
             
         System.out.println("************* processHouseValidity " + house.getIdentificationNo());
         houseId = house.getIdentificationNo();  //change to value return in json format later on
         type = house.getType();
-        landlord = house.getLandlord();
+        landlordNRIC = house.getLandlord();
      
       
-        boolean houseIsValid = checkHouseValidity(houseId,landlord);       
+        boolean houseIsValid = checkHouseValidity(houseId,landlordNRIC);     
 
         if(houseIsValid)
         {
@@ -255,7 +258,7 @@ public class HDBController implements HDBControllerLocal {
               return false;
     } 
     
-    private void updateHouseAsset(String id,String path, String status ){
+    private void updateHouseAsset(String id, String path, String status ){
         
                
         WebTarget myResource; 
@@ -274,13 +277,13 @@ public class HDBController implements HDBControllerLocal {
     }
     
     
-       private boolean checkHouseValidity(String id, String ownerId) throws HDBRecordNotFoundException
+       private boolean checkHouseValidity(String houseId, String landlordNRIC) throws HDBRecordNotFoundException
     {
        
         
-            Query query = em.createQuery("SELECT i FROM HDBHouseEntity i WHERE i.houseId = :id");
-            query.setParameter("id", id);
-            List<HDBHouseEntity> record = query.getResultList();
+            Query query = em.createQuery("SELECT i FROM HDBHouseOwnerRecordEntity i WHERE i.houseId = :houseId");
+            query.setParameter("houseId", houseId);
+            List<HDBHouseOwnerRecordEntity> record = query.getResultList();
             
             
             if(record.isEmpty()){
@@ -288,7 +291,7 @@ public class HDBController implements HDBControllerLocal {
             }
             else
             {
-               if(record.get(0).getHouseOwner().equals(ownerId)) 
+               if(record.get(0).getNRIC().equals(landlordNRIC)) 
                 {
                     return true;
                 }

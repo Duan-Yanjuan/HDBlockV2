@@ -17,16 +17,18 @@ public class PendingHouse {
     private int requestId;
     private String identificationNo;
     private String type;
+    private String address;
     private String landlord;
     
     
     public PendingHouse() {
     }
 
-    public PendingHouse(int requestId, String identificationNo, String type, String landlord) {
+    public PendingHouse(int requestId, String identificationNo, String address, String type, String landlord) {
         this.requestId = requestId;
         this.identificationNo = identificationNo;
         this.type = type;
+        this.address = address;
         this.landlord = landlord;
     }
     
@@ -70,6 +72,21 @@ public class PendingHouse {
      */
     public void setType(String type) {
         this.type = type;
+    }
+    
+        
+    /**
+     * @return the address
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(String addrss) {
+        this.address = address;
     }
     
     /**
