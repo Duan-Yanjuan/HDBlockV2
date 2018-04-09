@@ -11,7 +11,7 @@
         
        
             <p:tabView dynamic="true" cache="true" effect="fold">
-                <p:tab title="Create New Tenancy Agreement">
+                <p:tab  rendered="#{not empty tenancyAgreementManagedBean.landlordHouseInformation}" title="Create New Tenancy Agreement">
                     
                         <h:panelGrid columns="2" cellpadding="10">
                         <h:form id="createTaForm"> 
@@ -29,8 +29,7 @@
 
                                             <h:outputLabel for="rentalStart" value="Rental Start Date: " />
                                             <p:calendar id="rentalStart" value="#{tenancyAgreementManagedBean.taAsset.startDate}" mindate="today" label="Start Date" navigator="true" pattern="yyyy-MM-dd" yearRange="c-70:c+10" />
-
-                                            
+        
                                             
                                             <h:outputLabel for="rentalDuration" value="Rental Duration: " />
                                             <p:inputText id="rentalDuration"  value="#{tenancyAgreementManagedBean.taAsset.duration}" label="Rental Duration" />

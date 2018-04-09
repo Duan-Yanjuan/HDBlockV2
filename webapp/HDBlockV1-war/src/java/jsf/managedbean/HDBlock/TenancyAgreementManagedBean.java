@@ -63,9 +63,23 @@ public class TenancyAgreementManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct(){
         
-        boolean isLandlord = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLandlord");
+        
+        Object landlordSession = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLandlord");
+        boolean isLandlord = false;
+        Object tenantSession = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isTenant");
+        boolean isTenant = false;
+        if(landlordSession != null){
+           isLandlord  = (Boolean) landlordSession ;
+        }
+        else if(tenantSession != null){
+             isTenant = (Boolean) tenantSession;
+        }
+        
+        
+        
+        
         HDBlockUserEntity userInfo = (HDBlockUserEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userInformation");
-        boolean isTenant = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isTenant");
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isTenant");
         
       
         if(isLandlord){
