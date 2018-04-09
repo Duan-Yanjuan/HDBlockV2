@@ -51,7 +51,7 @@ public class ICAController implements ICAControllerLocal {
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
 
-    private final String COMPOSER_URL = "http://192.168.1.78:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://172.25.96.144:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String TENANT_ASSET_ORG = "org.acme.hdb.Tenant";
     private final String LANDLORD_ASSET_ORG = "org.acme.hdb.Landlord";
     private final String TENANT_ASSET_UPDATE_STATUS_ORG = "org.acme.hdb.UpdateTenantStatus";
