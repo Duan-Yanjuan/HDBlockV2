@@ -193,7 +193,15 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         query.setParameter("userEmail", email);
 
         try {
-            return (HDBlockUserEntity) query.getSingleResult();
+            HDBlockUserEntity userStatus= (HDBlockUserEntity) query.getSingleResult();
+            if(userStatus.isStatusIsValid())
+            {
+                System.out.println("Status is Valid");
+                return userStatus;
+            }else
+                System.out.println("Status is Valid = " + userStatus.isStatusIsValid() );
+                throw new UserNotFoundException("Your account is not activated.");
+          //  return 
         } catch (NoResultException | NonUniqueResultException ex) {
             System.out.println("Exception");
             throw new UserNotFoundException("User email " + email + " does not exist!");
@@ -222,7 +230,8 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                 throw new InvalidLoginCredentialException("email does not exist or invalid password!");
             }
         } catch (UserNotFoundException ex) {
-            throw new InvalidLoginCredentialException("email does not exist or invalid password!");
+           // ex.printStackTrace();
+            throw new InvalidLoginCredentialException(ex.getMessage());
         }
 
     }
