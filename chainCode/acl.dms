@@ -1,7 +1,5 @@
 /**
  * HDBlock access control file
- * !!! please check all the resource in report
- * ??? we should use asset as resouce or transaction as resource
  */
 
 // HDBlock acts on behalf of Tenants and Landlords
@@ -48,6 +46,8 @@ rule HDBCanReadTenancyAgreement {
     action: ALLOW
 }
 //end of access permission
+
+
 
 
 
@@ -150,6 +150,11 @@ rule UpdateTenancyAgreement {
     action: ALLOW
 }
 
+
+
+
+
+/*
 rule PayStampDuty {
     description: "Only HDBlock can pay stamp duty"
     participant: "org.acme.hdb.HDBlock"
@@ -158,67 +163,8 @@ rule PayStampDuty {
     condition: (r.agreement.status == 'Signed')
     action: ALLOW
 }
+*/
 
-
-
-
-
-
-
-
-
-
-
-
-
-rule AnyoneCanReadLandlords {
-  description: "Anyone can read a marble" 
-  participant(p): "org.acme.hdb.*" 
-  operation: READ
-  resource(r): "org.acme.hdb.Landlord" 
-  condition: (true)
-  action: ALLOW
-}
-
-rule OnlyHDBCanApproveHouse {
-    description: "Only HDB can approve house"
-    participant: "org.acme.hdb.HDB"
-    operation: UPDATE
-    resource: "org.acme.hdb.ApproveHouse"
-    action: ALLOW
-}
-
-
-//!!! in report, the condition should be tenant is valid and is associsted with the house
-rule OnlyTenantCanPayDeposit {
-    description: "Only tenant can pay deposit"
-    participant(p): "org.acme.hdb.HDBlock"
-    operation: CREATE
-    resource(r): "org.acme.hdb.PayDeposit"
-    condition: (p.status == "VALID" && r.tenant.getIdentifier() == p.getIdentifier())
-    action: ALLOW  
-}
-
-//!!! in report, change the name and description of this rule
-//!!! in report, the condition should be tenant is valid and is associsted with the house
-rule OnlyTenantCanPayDuty {
-    description: "Only tenant can pay duty"
-    participant(p): "org.acme.hdb.HDBlock"
-    operation: CREATE
-    resource(r): "org.acme.hdb.PayStampDuty"
-    condition: (p.status == "VALID" && r.tenant.getIdentifier() == p.getIdentifier())
-    action: ALLOW 
-}
-
-//!!! in report, the condition should be tenant is valid and is associsted with the house
-rule OnlyTenantCanRenew {
-    description: "Only tenant can renew"
-    participant(p): "org.acme.hdb.HDBlock"
-    operation: CREATE
-    resource(r): "org.acme.hdb.RenewTenancyAgreement"
-    condition: (p.status == "VALID" && r.tenant.getIdentifier() == p.getIdentifier())
-    action: ALLOW 
-}
 
 
 
@@ -246,7 +192,3 @@ rule NetworkAdminSystem {
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
-
-
-
-

@@ -49,6 +49,37 @@ function registerAsLandlord(landlord) {
 }
 
 /**
+ * @param {org.acme.hdb.RegisterHouse} Register House
+ * @transaction
+ */
+function registerHouse(args) {
+  console.log("############################################################");
+  var landlord = args.landlord
+  return getAssetRegistry('org.acme.hdb.House')
+    .then(function(houseRegistry) {
+    var factory = getFactory();
+    var newHouse = factory.newResource('org.acme.hdb', 'House', args.houseId);
+    newHouse.address = args.address;
+    newHouse.type = args.type;
+    newHouse.landlord = landlord;
+    houseRegistry.add(newHouse);
+    console.log("registerHouse: " + newHouse.address);
+    console.log("registerHouse: " + newHouse.type);
+    console.log("registerHouse: " + newHouse.landlord);
+    return getAssetRegistry('org.acme.hdb.Landlord')
+      .then(function(landlordRegistry) {
+      landlord.house = newHouse;
+      console.log("registerHouse: before update wordstate");
+      console.log("############################################################");
+      return landlordRegistry.update(landlord);
+    });
+  })
+  .catch(function (errir){
+    concole.log("registerHouse error: " + error.message);
+  });
+}
+
+/**
  * @param {org.acme.hdb.ApproveTenantIdentity} Approve Tenant Identity
  * @transaction
  */
@@ -83,37 +114,6 @@ function approveLandlordIdentity(args) {
   })
   .catch(function (errir){
     concole.log("approveLandlordIdentity error: " + error.message);
-  });
-}
-
-/**
- * @param {org.acme.hdb.RegisterHouse} Register House
- * @transaction
- */
-function registerHouse(args) {
-  console.log("############################################################");
-  var landlord = args.landlord
-  return getAssetRegistry('org.acme.hdb.House')
-    .then(function(houseRegistry) {
-    var factory = getFactory();
-    var newHouse = factory.newResource('org.acme.hdb', 'House', args.houseId);
-    newHouse.address = args.address;
-    newHouse.type = args.type;
-    newHouse.landlord = landlord;
-    houseRegistry.add(newHouse);
-    console.log("registerHouse: " + newHouse.address);
-    console.log("registerHouse: " + newHouse.type);
-    console.log("registerHouse: " + newHouse.landlord);
-    return getAssetRegistry('org.acme.hdb.Landlord')
-      .then(function(landlordRegistry) {
-      landlord.house = newHouse;
-      console.log("registerHouse: before update wordstate");
-      console.log("############################################################");
-      return landlordRegistry.update(landlord);
-    });
-  })
-  .catch(function (errir){
-    concole.log("registerHouse error: " + error.message);
   });
 }
 
@@ -189,23 +189,6 @@ function UpdateHouseStatus(args) {
   });
 }
 
-/**
- * @param {org.acme.hdb.SignTenancyAgreement} Sign Tenancy Agreement
- * @transaction
- */
-function signTenancyAgreement(args) {
-  console.log("############################################################");
-  return getAssetRegistry('org.acme.hdb.TenancySignature')
-    .then(function(tenancySignatureRegistry) {
-      args.signature.isSigned = true;
-    console.log("signTenancyAgreement: before update wordstate");
-    console.log("############################################################");
-    return tenancySignatureRegistry.update(args.signature);
-  })
-  .catch(function (errir){
-    concole.log("signTenancyAgreement error: " + error.message);
-  });
-}
 
 /**
  * @param {org.acme.hdb.CreateTenancyAgreement} Create Tenancy Agreement
@@ -274,6 +257,24 @@ function createTenancyAgreement(args) {
   })
   .catch(function (errir){
     concole.log("createTenancyAgreement error: " + error.message);
+  });
+}
+
+/**
+ * @param {org.acme.hdb.SignTenancyAgreement} Sign Tenancy Agreement
+ * @transaction
+ */
+function signTenancyAgreement(args) {
+  console.log("############################################################");
+  return getAssetRegistry('org.acme.hdb.TenancySignature')
+    .then(function(tenancySignatureRegistry) {
+      args.signature.isSigned = true;
+    console.log("signTenancyAgreement: before update wordstate");
+    console.log("############################################################");
+    return tenancySignatureRegistry.update(args.signature);
+  })
+  .catch(function (errir){
+    concole.log("signTenancyAgreement error: " + error.message);
   });
 }
 
@@ -360,36 +361,25 @@ function payStampDuty(args) {
 }
 
 
+/**
+ * @param {org.acme.hdb.PayDeposit} Pay Deposit
+ * @transaction
+ */
+ /*
+function payDeposit() {
 
-
-
-
-
-
-
-
-
-
-
-
-
+}
+*/
 
 /**
  * @param {org.acme.hdb.RenewTenancyAgreement} Renew Tenancy Agreement
  * @transaction
  */
+ /*
 function renewTenancyAgreement() {
 
 }
-
-/**
- * @param {org.acme.hdb.PayDeposit} Pay Deposit
- * @transaction
- */
-function payDeposit() {
-
-}
-
+*/
 
 /**
  * @param {org.acme.hdb.GetAllPendingTenants} get all pending tenants (for ICA to use)
