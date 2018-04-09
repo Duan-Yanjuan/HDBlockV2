@@ -35,6 +35,10 @@ public interface ICAControllerLocal {
 
     public ICAIdentificationRecordEntity createNewIdentificationRecord(ICAIdentificationRecordEntity newRecord);
 
+    public ICAIdentificationRecordEntity retrieveAllIdentificationById(String IC);
+
+    public boolean processUserIdentity(String ic, String userType, String result);
+
 
 
      

@@ -12,46 +12,48 @@ package util.helperclass;
 public class Tenant {
     
     
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
-    private String identificationNo;
+    private String tenantStatus;
 
     public Tenant() {
     }
 
-    public Tenant(String name, String email, String identificationNo) {
-        this.name = name;
+    public Tenant(String firstName, String lastName, String email, String tenantStatus) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
-        this.identificationNo = identificationNo;
+        this.tenantStatus = tenantStatus;
     }
 
 
     /**
-     * @return the identificationNo
+     * @return the firstName
      */
-    public String getIdentificationNo() {
-        return identificationNo;
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * @param identificationNo the identificationNo to set
+     * @param firstName the firstName to set
      */
-    public void setIdentificationNo(String identificationNo) {
-        this.identificationNo = identificationNo;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     /**
-     * @return the name
+     * @return the lastName
      */
-    public String getName() {
-        return name;
+    public String getLastName() {
+        return lastName;
     }
 
     /**
-     * @param name the name to set
+     * @param lastName the lastName to set
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     /**
@@ -67,7 +69,22 @@ public class Tenant {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
+    /**
+     * @return the tenantStatus
+     */
+    public String getTenantStatus() {
+        return tenantStatus;
+    }
+
+    /**
+     * @param tenantStatus the tenantStatus to set
+     */
+    public void setTenantStatus(String tenantStatus) {
+        this.tenantStatus = tenantStatus;
+    }
+
+  
     
     
 }
