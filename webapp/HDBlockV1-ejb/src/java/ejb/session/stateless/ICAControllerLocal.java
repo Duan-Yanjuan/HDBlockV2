@@ -37,7 +37,8 @@ public interface ICAControllerLocal {
 
     public ICAIdentificationRecordEntity retrieveAllIdentificationById(String IC);
 
-    public boolean processUserIdentity(String ic, String userType, String result);
+    public boolean finalProcessUserIdentity(String ic, String userType, String result);
+
 
 
 

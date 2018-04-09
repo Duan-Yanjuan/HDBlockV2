@@ -63,8 +63,8 @@ public class DataInitialization {
 //              hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate, 2, 3000, 1500, 1500, tenantsId, houseId);
 //       
 //      
-              hDBlockUserEntityControllerLocal.retrieveTenancyAgreementByLandlordId("S1234567P");
-              hDBlockUserEntityControllerLocal.retrieveTenancySinatureByTenantId("S9876541G");
+            //  hDBlockUserEntityControllerLocal.retrieveTenancyAgreementByLandlordId("S1234567P");
+           //   hDBlockUserEntityControllerLocal.retrieveTenancySinatureByTenantId("S9876541G");
 
             if(hDBlockUserEntityControllerLocal.retrieveAllUser().isEmpty()){
                 
@@ -104,7 +104,7 @@ public class DataInitialization {
                 
                 identity1IssueDate = sdf.parse("20-05-2015");
                 identity1ValidityDate = sdf.parse("20-05-2019");
-                identity1BirthDate = sdf.parse("10-08-1980");
+                identity1BirthDate = sdf.parse("10-09-1980");
 
                 identity2IssueDate = sdf.parse("07-11-2016");
                 identity2ValidityDate = sdf.parse("10-11-2020");
@@ -143,7 +143,7 @@ public class DataInitialization {
               String [] tenantsId = {"S9876541G"};
               String houseId = house1.getPostalCode() + house1.getUnitNumber().substring(1) +  todayDateFormated[0] + todayDateFormated[1] + todayDateFormated[2]   ;
               System.out.println("HOUSE ID " + houseId);
-              hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate, 2, 3000, 1500, 1500, tenantsId, houseId);
+            //  hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate, 2, 3000, 1500, 1500, tenantsId, houseId);
 //       
 
         } catch (CreateNewUserException | UserNotFoundException | CreateNewHouseException ex) {

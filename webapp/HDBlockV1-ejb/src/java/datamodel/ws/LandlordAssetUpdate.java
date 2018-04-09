@@ -16,26 +16,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlType(name = "landlordAssetUpdate", propOrder = {
     "$class",
-    "id",
-    "ICStatus",
+    "status",
+    "landlord",
 
 })
 public class LandlordAssetUpdate {
     
      private String $class;
-    private String id;
-    private String ICStatus;
+     private String status;
+     private String landlord;
 
     public LandlordAssetUpdate() {
     }
 
-    public LandlordAssetUpdate(String $class, String id, String ICStatus) {
+    public LandlordAssetUpdate(String $class, String status, String landlord) {
         this.$class = $class;
-        this.id = id;
-        this.ICStatus = ICStatus;
+        this.status = status;
+        this.landlord = landlord;
     }
     
-
+    
 
     /**
      * @return the $class
@@ -52,33 +52,34 @@ public class LandlordAssetUpdate {
     }
 
     /**
-     * @return the id
+     * @return the status
      */
-    public String getId() {
-        return id;
+    public String getStatus() {
+        return status;
     }
 
     /**
-     * @param id the id to set
+     * @param status the status to set
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**
-     * @return the ICStatus
+     * @return the landlord
      */
-    public String getICStatus() {
-        return ICStatus;
+    public String getLandlord() {
+        return landlord;
     }
 
     /**
-     * @param ICStatus the ICStatus to set
+     * @param landlord the landlord to set
      */
-    public void setICStatus(String ICStatus) {
-        this.ICStatus = ICStatus;
+    public void setLandlord(String landlord) {
+        this.landlord = landlord;
     }
-    
-    
+     
+     
+
     
 }

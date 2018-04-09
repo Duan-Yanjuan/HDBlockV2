@@ -133,8 +133,9 @@ public class ICAController implements ICAControllerLocal {
 
     }
 
-     @Override
-    public boolean processUserIdentity(String ic,String userType , String result ){  //this is triggered when ICA staff manually choose to reject or approve.
+   
+    @Override
+    public boolean finalProcessUserIdentity(String ic,String userType , String result ){  //this is triggered when ICA staff manually choose to reject or approve.
         
         String status = "Invalid";
         if(result.equals(CLIENT))
@@ -155,6 +156,10 @@ public class ICAController implements ICAControllerLocal {
 
     }   
        
+       
+       
+       
+       
     @Override
     public boolean processUserIdentity(PendingUser user) throws ICRecordNotFoundException {
 
@@ -173,7 +178,7 @@ public class ICAController implements ICAControllerLocal {
 
         try {
 
-            System.out.println("************* processUserIdentity " + user.getUserType());
+            System.out.println("************* processUserIdentity " + user.getUserType() +  " " + user.getDob());
             ic = user.getIdentificationNo();  //change to value return in json format later on
             dob = user.getDob(); //change to json value
             firstName = user.getFirstName();
@@ -238,9 +243,9 @@ public class ICAController implements ICAControllerLocal {
                 return true;
 
         } else if (userType.equals("Landlord")) {
-            System.out.println("************* LADNLO CALLIONG COMPOSER");
-            landlord = new LandlordAssetUpdate(path, ic, status);
-            registerUserResponse = myResource.request().put(Entity.json(landlord));
+            System.out.println("************* LANDLORD CALLIONG COMPOSER IC is " + ic + "path is " + path);
+            landlord = new LandlordAssetUpdate(path, status, ic);
+            registerUserResponse = myResource.request().post(Entity.json(landlord));
             System.out.println("************* Response " + registerUserResponse.getStatus());
              if(registerUserResponse.getStatus() == 200)
                 return true;
@@ -318,10 +323,11 @@ public class ICAController implements ICAControllerLocal {
                     firstName = landlords.getJsonObject(i).getString("firstName");
                     lastName = landlords.getJsonObject(i).getString("lastName");
                     icaStatus = landlords.getJsonObject(i).getString("ICStatus");
+                    dob = landlords.getJsonObject(i).getString("DOB");
                     //dob = tenants.getJsonObject(i).get("lastName");
 
                     if (icaStatus.equals("Pending")) {
-                        usersWithPendingStatus.add(new PendingUser((noOfTenant + i + 1), userIdentificationNo, userEmail, firstName, lastName, dob, "Landlord"));
+                        usersWithPendingStatus.add(new PendingUser((noOfLandlord + i + 1), userIdentificationNo, userEmail, firstName, lastName, dob, "Landlord"));
                     }
 
                     System.out.println("**************** Landlord ID is " + userIdentificationNo);
@@ -344,7 +350,6 @@ public class ICAController implements ICAControllerLocal {
     private boolean checkIdentificationValidity(String identificationNumber, String dateOfBirth, String firstName, String lastName) throws ICRecordNotFoundException {
 
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-
         Query query = em.createQuery("SELECT i FROM ICAIdentificationRecordEntity i WHERE i.nric = :ic");
         query.setParameter("ic", identificationNumber);
         List<ICAIdentificationRecordEntity> record = query.getResultList();
