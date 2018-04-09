@@ -8,159 +8,237 @@
 
     <ui:define name="content">
 
-        
-       
-            <p:tabView dynamic="true" cache="true" effect="fold">
-                <p:tab  rendered="#{not empty tenancyAgreementManagedBean.landlordHouseInformation}" title="Create New Tenancy Agreement">
-                    
-                        <h:panelGrid columns="2" cellpadding="10">
-                        <h:form id="createTaForm"> 
-                            
-                               <p:messages id="register_error_messages" closable="true"></p:messages>
-                        
-               
-                                    <h:panelGrid columns="2" style="width:100%" cellpadding="25"  columnClasses="logo,detail">
-                                        <p:outputPanel>
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                            <h:outputLabel style="font-weight: bold; font-size:large;"   value="Create Tenancy Agreement" />
-                                           <h:outputLabel  value="" />
-                                           <h:outputLabel for="house" value="Select House" />
-                                           <p:inputText id="house"   value="#{tenancyAgreementManagedBean.landlordHouseInformation.address}" readonly="true" label="House" />
 
-                                            <h:outputLabel for="rentalStart" value="Rental Start Date: " />
-                                            <p:calendar id="rentalStart" value="#{tenancyAgreementManagedBean.taAsset.startDate}" mindate="today" label="Start Date" navigator="true" pattern="yyyy-MM-dd" yearRange="c-70:c+10" />
-        
-                                            
-                                            <h:outputLabel for="rentalDuration" value="Rental Duration: " />
-                                            <p:inputText id="rentalDuration"  value="#{tenancyAgreementManagedBean.taAsset.duration}" label="Rental Duration" />
 
-                                               <h:outputLabel for="securityDeposit" value="Security Deposit($): " />
-                                               <p:inputText id="securityDeposit"  value="#{tenancyAgreementManagedBean.taAsset.securityDeposit}" label="Security Deposit" />
+        <p:tabView  rendered="#{tenancyAgreementManagedBean.isLandlord}" dynamic="true" cache="true" effect="fold">
+            <p:tab  title="Create New Tenancy Agreement">
 
-                                               <h:outputLabel for="advanceRental" value="Advance Rental Fee($): " />
-                                               <p:inputText id="advanceRental"  value="#{tenancyAgreementManagedBean.taAsset.advanceRentalFee}" label="Advance Rental Fee" />
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:form id="createTaForm"> 
 
-                                            <h:outputLabel for="rentalFee" value="Rental Fee($): " />
-                                            <p:inputText id="rentalFee"  value="#{tenancyAgreementManagedBean.taAsset.rentalFee}" label="Rental Fee" />
-                                            
-                                        </h:panelGrid>
-                                    </p:outputPanel>
-                                </h:panelGrid>
-                            
-                            
-                               <p:commandButton  style="margin-left:30px;" process="pg_tenants @this" value="Add New tenant" actionListener="#{tenancyAgreementManagedBean.add_tenant}" update="pg_tenants"/>
-                            <h:panelGrid style="margin-left:10px;"  columns="2" cellspacing="10"  id="pg_tenants" >
-                             <br />
-                             <ui:repeat value="#{tenancyAgreementManagedBean.tenants}" var="tenant" varStatus="sizeStatus">
-                                 <h:outputLabel value="Tenants IC: " />
-                                 <p:inputText value="#{tenant.ic}" />&nbsp;&nbsp;&nbsp;
-                                 <br/>
-                                 <br/>
-                             </ui:repeat>
-                                
-                                                         
-                        </h:panelGrid>
-                            
-                            <h:panelGrid columns="1" style="width:100%">
-                                <p:commandButton value="Submit Tenancy Agreemenet" action="#{tenancyAgreementManagedBean.submitTa}"  process="createTaForm" update="@form" />
-                            </h:panelGrid>
-                                
-              
-                        </h:form>
-                    </h:panelGrid>
+                        <p:messages id="register_error_messages" closable="true"></p:messages>
 
-                              
-                </p:tab>
-                <p:tab title="View Tenancy Agreement">
-                      <h:panelGrid columns="2" cellpadding="10">
 
-                        <h:form id="form">
-
-                         <p:growl id="msgs" showDetail="true" />
-                         <p:dataTable id="tenancyAgreementTable" var="tenancy" value="#{tenancyAgreementManagedBean.landlordTenancyAgreements}">
-                 <f:facet name="header">
-                    <h1> Your Tenancy Agreement </h1>
-                </f:facet>
-                <p:column headerText="Id">
-                    <h:outputText value="#{tenancy.tenancyAgreementId}" />
-                </p:column>
-                <p:column headerText="Date Created">
-                    <h:outputText value="#{tenancy.dateCreated}" />
-                </p:column>
-                <p:column headerText="Rental Start Date">
-                    <h:outputText value="#{tenancy.startDate}" />
-                </p:column>
-                <p:column headerText="Last Name">
-                    <h:outputText value="#{tenancy.contractStatus}" />
-                </p:column>
-                <p:column style="width:32px;text-align: center">
-                    <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('tenancyDetailedDialog').show()"  title="View">
-                        <f:setPropertyActionListener value="#{tenancy}" target="#{tenancyAgreementManagedBean.selectedTenancy}" />
-                    </p:commandButton>
-                </p:column>
-            </p:dataTable>
-
-            <p:dialog header="Detailed Tenancy Information" appendTo="@(body)"  widgetVar="requestDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500px" height="350px">
-                <h2>Tenancy Agreement</h2>
-                <p:panelGrid columns="2" >
-                  
-                    <h:outputText value="Tenancy Agreement ID: " />
-                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.tenancyAgreementId}" />
-
-                    <h:outputText value="Date Created: " />
-                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.dateCreated}" />
-
-                    <h:outputText value="Rental Start Date" />
-                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.startDate}"/>
-                    
-                    <h:outputText value="Monthly Rental Fee($)" />
-                    <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.rentalFee}"/>
-                    
-                    <h:outputText value="Advance Rental Fee Paid($)" />
-                    <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.advanceRentalFee}"/>
-                    
-                    <h:outputText value="Security Deposit Paid($)" />
-                    <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.securityDeposit}"/>
-                       
-                    <h:outputText value="Contract Status" />
-                    <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.contractStatus}"/>
-             
-                </p:panelGrid>
-                
-                  <h2>Tenant Information</h2>           
-                  <p:repeat value="#{tenancyAgreementManagedBean.selectedTenancy.tenants}" var="tenant">
-
-                      <h:panelGrid columns="2" cellpadding="5">
-
+                        <h:panelGrid columns="2" style="width:100%" cellpadding="25"  columnClasses="logo,detail">
                             <p:outputPanel>
                                 <h:panelGrid columns="2" cellpadding="5">
-                                    <h:outputText value="Tenant Name: " style="font-weight: bold" />
-                                    <h:outputText value="#{tenant.firstName} #{tenant.lastName}" />
+                                    <h:outputLabel style="font-weight: bold; font-size:large;"   value="Create Tenancy Agreement" />
+                                    <h:outputLabel  value="" />
+                                    <h:outputLabel for="house" value="Select House" />
+                                    <p:inputText id="house"   value="#{tenancyAgreementManagedBean.landlordHouseInformation.address}" readonly="true" label="House" />
 
-                                    <h:outputText value="Tenant Email: " style="font-weight: bold" />
-                                    <h:outputText value="#{tenant.email}" />
-                                    
-                                     <h:outputText value="Tenant Email: " style="font-weight: bold" />
-                                    <h:outputText value="#{tenant.email}"/>
-                                       
-                                    <h:outputText value="Tenant Status " style="font-weight: bold" />
-                                    <h:outputText value="#{tenant.tenantStatus}"/>
-                  
+                                    <h:outputLabel for="rentalStart" value="Rental Start Date: " />
+                                    <p:calendar id="rentalStart" value="#{tenancyAgreementManagedBean.taAsset.startDate}" mindate="today" label="Start Date" navigator="true" pattern="yyyy-MM-dd" yearRange="c-70:c+10" />
+
+
+                                    <h:outputLabel for="rentalDuration" value="Rental Duration: " />
+                                    <p:inputText id="rentalDuration"  value="#{tenancyAgreementManagedBean.taAsset.duration}" label="Rental Duration" />
+
+                                    <h:outputLabel for="securityDeposit" value="Security Deposit($): " />
+                                    <p:inputText id="securityDeposit"  value="#{tenancyAgreementManagedBean.taAsset.securityDeposit}" label="Security Deposit" />
+
+                                    <h:outputLabel for="advanceRental" value="Advance Rental Fee($): " />
+                                    <p:inputText id="advanceRental"  value="#{tenancyAgreementManagedBean.taAsset.advanceRentalFee}" label="Advance Rental Fee" />
+
+                                    <h:outputLabel for="rentalFee" value="Rental Fee($): " />
+                                    <p:inputText id="rentalFee"  value="#{tenancyAgreementManagedBean.taAsset.rentalFee}" label="Rental Fee" />
+
                                 </h:panelGrid>
                             </p:outputPanel>
                         </h:panelGrid>
-                    </p:repeat>
 
-            </p:dialog>
 
-        </h:form>
-        
-        
-                       
+                        <p:commandButton  style="margin-left:30px;" process="pg_tenants @this" value="Add New tenant" actionListener="#{tenancyAgreementManagedBean.add_tenant}" update="pg_tenants"/>
+                        <h:panelGrid style="margin-left:10px;"  columns="2" cellspacing="10"  id="pg_tenants" >
+                            <br />
+                            <ui:repeat value="#{tenancyAgreementManagedBean.tenants}" var="tenant" varStatus="sizeStatus">
+                                <h:outputLabel value="Tenants IC: " />
+                                <p:inputText value="#{tenant.ic}" />&nbsp;&nbsp;&nbsp;
+                                <br/>
+                                <br/>
+                            </ui:repeat>
+
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" style="width:100%">
+                            <p:commandButton value="Submit Tenancy Agreemenet" action="#{tenancyAgreementManagedBean.submitTa}"  process="createTaForm" update="@form" />
+                        </h:panelGrid>
+
+
+                    </h:form>
+                </h:panelGrid>
+
+
+            </p:tab>
+            <p:tab title="View Tenancy Agreement">
+
+
+                <h:form id="viewTaFormLandlord">
+
+                    <h:panelGrid columns="2" cellpadding="10">
+
+                        <p:growl id="msgs" showDetail="true" />
+                        <p:dataTable id="tenancyAgreementTable" var="tenancy" value="#{tenancyAgreementManagedBean.landlordTenancyAgreements}">
+                            <f:facet name="header">
+                                <h1> Your Tenancy Agreement </h1>
+                            </f:facet>
+                            <p:column headerText="Id">
+                                <h:outputText value="#{tenancy.tenancyAgreementId}" />
+                            </p:column>
+                            <p:column headerText="Date Created">
+                                <h:outputText value="#{tenancy.dateCreated}" />
+                            </p:column>
+                            <p:column headerText="Rental Start Date">
+                                <h:outputText value="#{tenancy.startDate}" />
+                            </p:column>
+                            <p:column headerText="Contract Status">
+                                <h:outputText value="#{tenancy.contractStatus}" />
+                            </p:column>
+                            <p:column style="width:32px;text-align: center">
+                                <p:commandButton  icon="ui-icon-search" update="@form" oncomplete="PF('tenancyDetailedDialog').show()"  title="View">
+                                    <f:setPropertyActionListener value="#{tenancy}"  target="#{tenancyAgreementManagedBean.selectedTenancy}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dialog header="Detailed Tenancy Information" id="tenancyDetailedDialog" appendTo="@(body)"  widgetVar="tenancyDetailedDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500px" height="450px">
+                            <h2>Tenancy Agreement</h2>
+                            <p:panelGrid columns="2" >
+
+                                <h:outputText value="Tenancy Agreement ID: " />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.tenancyAgreementId}" />
+
+                                <h:outputText value="Date Created: " />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.dateCreated}" />
+
+                                <h:outputText value="Rental Start Date" />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.startDate}"/>
+
+                                <h:outputText value="Rental Duration " />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.rentalDuration}"/>
+
+                                <h:outputText value="Monthly Rental Fee($)" />
+                                <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.rentalFee}"/>
+
+                                <h:outputText value="Advance Rental Fee Paid($)" />
+                                <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.advanceRentalFee}"/>
+
+                                <h:outputText value="Security Deposit Paid($)" />
+                                <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancy.securityDeposit}"/>
+
+                                <h:outputText value="Contract Status" />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancy.contractStatus}"/>
+
+
+                            </p:panelGrid>
+
+                            <h2>Tenant Information</h2>           
+                            <p:repeat value="#{tenancyAgreementManagedBean.selectedTenancy.tenants}" var="tenant">
+
+                                <h:panelGrid columns="2" cellpadding="5">
+
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" cellpadding="5">
+                                            <h:outputText value="Tenant Name: " style="font-weight: bold" />
+                                            <h:outputText value="#{tenant.firstName} #{tenant.lastName}" />
+
+                                            <h:outputText value="Tenant Email: " style="font-weight: bold" />
+                                            <h:outputText value="#{tenant.email}" />
+
+
+                                            <h:outputText value="Tenant Status " style="font-weight: bold" />
+                                            <h:outputText value="#{tenant.tenantStatus}"/>
+
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+                                </h:panelGrid>
+                            </p:repeat>
+
+                        </p:dialog>
+
+
+
+
                     </h:panelGrid>
-                </p:tab>
 
-            </p:tabView>
+                </h:form>
+            </p:tab>
+
+        </p:tabView>
+
+        <p:tabView rendered="#{tenancyAgreementManagedBean.isTenant}" dynamic="true" cache="true" effect="fold">
+            <p:tab title="View Tenancy Agreement">
+
+                  <h:form id="viewTaFormTenant">
+                         <p:messages id="tenant_Sign_Contract" closable="true"></p:messages>
+                    <h:panelGrid columns="2" cellpadding="10">
+
+                        <p:growl id="msgs" showDetail="true" />
+                        <p:dataTable id="tenantTenancyAgreementTable" var="tenantTenancy" value="#{tenancyAgreementManagedBean.tenantSignature}">
+                            <f:facet name="header">
+                                <h1> Your Tenancy Signature </h1>
+                            </f:facet>
+                            <p:column headerText="Id">
+                                <h:outputText value="#{tenantTenancy.agreement}" />
+                            </p:column>
+                            <p:column headerText="Date Created">
+                                <h:outputText value="#{tenantTenancy.tenantTa.dateCreated}" />
+                            </p:column>
+                            <p:column headerText="Rental Start Date">
+                                <h:outputText value="#{tenantTenancy.tenantTa.startDate}" />
+                            </p:column>
+                            <p:column headerText="Contract Status">
+                                <h:outputText value="#{tenantTenancy.tenantTa.contractStatus}" />
+                            </p:column>
+                            <p:column style="width:32px;text-align: center">
+                                <p:commandButton  icon="ui-icon-search" update="@form" oncomplete="PF('tenancyDetailedTenantDialog').show()"  title="View">
+                                    <f:setPropertyActionListener value="#{tenantTenancy}"  target="#{tenancyAgreementManagedBean.selectedTenancySign}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        
+                        <p:dialog header="Detailed Tenancy Information" id="tenancyDetailedTenantDialog" appendTo="@(body)"  widgetVar="tenancyDetailedTenantDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="500px" height="450px">
+                            <h2>Tenancy Agreement</h2>
+                            <p:panelGrid columns="2" >
+
+                                <h:outputText value="Tenancy Agreement ID: " />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancySign.agreement}" />
+
+                                <h:outputText value="Date Created: " />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancySign.tenantTa.dateCreated}" />
+
+                                <h:outputText value="Rental Start Date" />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancySign.tenantTa.startDate}"/>
+
+                                <h:outputText value="Rental Duration " />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancySign.tenantTa.rentalDuration}"/>
+
+                                <h:outputText value="Monthly Rental Fee($)" />
+                                <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancySign.tenantTa.rentalFee}"/>
+
+                                <h:outputText value="Advance Rental Fee Paid($)" />
+                                <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancySign.tenantTa.advanceRentalFee}"/>
+
+                                <h:outputText value="Security Deposit Paid($)" />
+                                <h:outputText value="S$#{tenancyAgreementManagedBean.selectedTenancySign.tenantTa.securityDeposit}"/>
+
+                                <h:outputText value="Contract Status" />
+                                <h:outputText value="#{tenancyAgreementManagedBean.selectedTenancySign.tenantTa.contractStatus}"/>
+                                
+                                 <h:outputText value="Has Signed Contract" />
+                                 <h:outputText rendered="#{tenancyAgreementManagedBean.selectedTenancySign.isSigned}" value="YES" />
+                                 <p:commandButton  oncomplete="PF('tenancyDetailedTenantDialog').hide()"   rendered="#{!tenancyAgreementManagedBean.selectedTenancySign.isSigned}"  value="Sign Contract" process="@this" update="@form" actionListener="#{tenancyAgreementManagedBean.signContract}"  title="Sign"/>
+                            </p:panelGrid>
+                        </p:dialog>
+
+                    </h:panelGrid>
+
+                </h:form>
+            </p:tab>
+        </p:tabView>
+
+
 
     </ui:define>
 

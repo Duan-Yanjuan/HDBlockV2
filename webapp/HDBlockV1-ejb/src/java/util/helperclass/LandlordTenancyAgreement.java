@@ -26,11 +26,20 @@ public class LandlordTenancyAgreement {
 
     public LandlordTenancyAgreement() {
     }
-    
-    
-    
-    
 
+    public LandlordTenancyAgreement(String tenancyAgreementId, String dateCreated, String startDate, double securityDeposit, double advanceRentalFee, int rentalDuration, double rentalFee, List<Tenant> tenants, String contractStatus) {
+        this.tenancyAgreementId = tenancyAgreementId;
+        this.dateCreated = dateCreated;
+        this.startDate = startDate;
+        this.securityDeposit = securityDeposit;
+        this.advanceRentalFee = advanceRentalFee;
+        this.rentalDuration = rentalDuration;
+        this.rentalFee = rentalFee;
+        this.tenants = tenants;
+        this.contractStatus = contractStatus;
+    }
+    
+   
     /**
      * @return the tenancyAgreementId
      */
