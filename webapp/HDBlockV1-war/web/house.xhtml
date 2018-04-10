@@ -107,9 +107,9 @@
                                             <h:outputText rendered="#{!landlordHouse.statusIsValid}" value="Waiting for Approval" style="font-weight: bold"/>
                                             <h:outputText rendered="#{landlordHouse.statusIsValid}" value="Occupied" style="font-weight: bold"/>
                                             
-                                            <p:selectBooleanButton rendered="#{houseManagedBean.rentalStatus != 'occupied'}"  id="udpateButton" value="#{selectBooleanView.value2}" onLabel="edit" offLabel="Update" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px">
+<!--                                            <p:selectBooleanButton rendered="#{houseManagedBean.rentalStatus != 'occupied'}"  id="udpateButton" value="#{selectBooleanView.value2}" onLabel="edit" offLabel="Update" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px">
                                                 <p:ajax listener="#{selectBooleanView.addMessage}" />
-                                            </p:selectBooleanButton>
+                                            </p:selectBooleanButton>-->
 
                                         </h:panelGrid>
                                     </p:outputPanel>

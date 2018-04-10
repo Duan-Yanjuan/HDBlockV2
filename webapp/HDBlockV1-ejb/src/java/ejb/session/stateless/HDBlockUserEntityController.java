@@ -5,12 +5,12 @@
  */
 package ejb.session.stateless;
 
+import datamodel.ws.HouseAsset;
 import datamodel.ws.LandlordAsset;
-import datamodel.ws.LandlordAssetUpdate;
 import datamodel.ws.SignContract;
 import datamodel.ws.TenancyAgreementAsset;
 import datamodel.ws.TenantAsset;
-import datamodel.ws.TenantAssetUpdate;
+import datamodel.ws.UpdateTenancyAgreement;
 import entity.HDBHouseEntity;
 import entity.HDBlockUserEntity;
 import java.io.StringReader;
@@ -57,7 +57,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
 
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
-    private final String COMPOSER_URL = "http://172.25.96.144:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://172.25.97.56:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String TENANT_ASSET_ORG = "org.acme.hdb.RegisterAsTenant";
     private final String LANDLORD_ASSET_ORG = "org.acme.hdb.RegisterAsLandlord";
     private final String CREATE_TENANCY_AGREEMENT_ASSET_ORG = "org.acme.hdb.CreateTenancyAgreement";
@@ -173,11 +173,26 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
             em.flush();
             em.refresh(newHouse);
             HDBlockUserEntity landlordInformation = retrieveUserByEmail(landlordEmail);
+              System.out.println("*********** REGISTER House RESPONSE IS ");
             String landlordIC = landlordInformation.getIdentificationNo();
-            //pass chain code with landlord ID 
+            WebTarget myResource; 
+            Response registerHouseResponse;
+            int responseStatus = 0 ;
+            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+       /*      public HouseAsset(String $class, String houseId, String address, String status, String type, String landlord, String[] tenants) {
+        this.$class = $class;*/
+               System.out.println("*********** REGISTER House RESPONSE IS ");
+               //CALL COMPOSER REST SERVER TO CREATE NEW USER(TENANT).
+               myResource = CLIENT.target(COMPOSER_URL).path("org.acme.hdb.RegisterHouse");
+               System.out.println("*********** PATH IS  "  + myResource.getUri());
+               String houseId = newHouse.getPostalCode() + "_" +  newHouse.getUnitNumber();
+               HouseAsset ha = new HouseAsset("org.acme.hdb.RegisterHouse" , houseId , newHouse.getAddress(), newHouse.getFlatType(), landlordIC);
+               System.out.println("********************* HOUSE ID IS " + houseId );
+               registerHouseResponse = myResource.request().post(Entity.json(ha));
+               responseStatus = registerHouseResponse.getStatus();
+               System.out.println("*********** REGISTER House RESPONSE IS " + responseStatus);
 
-            //registerHouse call another chain code
-            // HDB table call occupant table is needed.
+
             return newHouse;
 
         } catch (UserNotFoundException ex) {
@@ -198,9 +213,9 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
             {
                 System.out.println("Status is Valid");
                 return userStatus;
-            }else
-                System.out.println("Status is Valid = " + userStatus.isStatusIsValid() );
-                throw new UserNotFoundException("Your account is not activated.");
+            }
+            
+             return userStatus;
           //  return 
         } catch (NoResultException | NonUniqueResultException ex) {
             System.out.println("Exception");
@@ -729,8 +744,9 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
      
      
      
+    
     @Override
-     public boolean SignContract(String signatureId){
+     public boolean SignContract(String signatureId , String agreementId){
          
         WebTarget myResource;
         Response signContractResponse;
@@ -742,6 +758,13 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
            
             System.out.println("************* Response " + signContractResponse.getStatusInfo());
              if(signContractResponse.getStatus() == 200){
+                 
+                 myResource = CLIENT.target(COMPOSER_URL).path("org.acme.hdb.UpdateTenancyAgreement");
+                 System.out.println("*full path of updating tenancy agreement " + myResource.getUri() + " agreemennt ID " + agreementId);
+                 UpdateTenancyAgreement updateTa = new UpdateTenancyAgreement("org.acme.hdb.UpdateTenancyAgreement" , agreementId);
+                 signContractResponse = myResource.request().post(Entity.json(updateTa));
+                  System.out.println("************* Response update tenancy agreement " + signContractResponse.getStatusInfo());
+                 
                  return true;
                  
              }
@@ -755,9 +778,9 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
     
     
     @Override
-    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration , double securityDeposit , double advanceRentalFee, double rentalFee, String[] tenantsId , String tenancyId ){
+    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration , double securityDeposit , double advanceRentalFee, double rentalFee, String[] tenantsId , String tenancyId , String houseId ){
         
-        String houseID_Formatted = "house1234" ;
+        String houseID_Formatted = houseId ;
         System.out.println("*********** Creating Tenancy Agreement");
         WebTarget myResource;
         Response createTenancyAgreementResponse;

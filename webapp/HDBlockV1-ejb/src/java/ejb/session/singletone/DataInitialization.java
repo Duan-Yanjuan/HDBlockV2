@@ -105,6 +105,15 @@ public class DataInitialization {
             Date identity2IssueDate = new Date();
             Date identity2ValidityDate = new Date();
             Date identity2BirthDate = new Date();
+            
+                        Date identity3IssueDate = new Date();
+            Date identity3ValidityDate = new Date();
+            Date identity3BirthDate = new Date();
+            
+             
+            Date identity4IssueDate = new Date();
+            Date identity4ValidityDate = new Date();
+            Date identity4BirthDate = new Date();
 
             try {
                  rentalDate = sdfRental.parse("2018-04-30");
@@ -118,16 +127,23 @@ public class DataInitialization {
                 identity2IssueDate = sdf.parse("07-11-2016");
                 identity2ValidityDate = sdf.parse("10-11-2020");
                 identity2BirthDate = sdf.parse("21-04-1992");
+                
+                identity3IssueDate = sdf.parse("07-11-1985");
+                identity3BirthDate = sdf.parse("21-04-1970");
+                
+                identity4IssueDate = sdf.parse("07-11-2017");
+                identity4ValidityDate = sdf.parse("10-11-2021");
+                identity4BirthDate = sdf.parse("21-04-1993");
 
                 Date c = sdf.parse("2015-05-26");
             } catch (ParseException ex) {
                 ex.printStackTrace();
             }
 
-            HDBlockUserEntity landlord1 = new HDBlockUserEntity("S1234567P", "mary80@gmail.com", "Mary", "Tan", "87762123", landlordDob , "landlord", "password");
+            HDBlockUserEntity landlord1 = new HDBlockUserEntity("S1234566P", "mary80@gmail.com", "Mary", "Tan", "87762123", landlordDob , "landlord", "password");
             landlord1 = hDBlockUserEntityControllerLocal.registerAccount(landlord1);
 
-            HDBlockUserEntity tenant1 = new HDBlockUserEntity("S9876541G", "david93@gmail.com", "David", "Tan", "93219083", tenantDob, "tenant", "password");
+            HDBlockUserEntity tenant1 = new HDBlockUserEntity("S9876542G", "david93@gmail.com", "David", "Tan", "93219083", tenantDob, "tenant", "password");
             tenant1 = hDBlockUserEntityControllerLocal.registerAccount(tenant1);
 
             HDBHouseEntity house1 = new HDBHouseEntity("Hougang Avenue 1", "#11-121", "531012", "2 Room Flat", "XXXXX", 1700.00, landlord1);
@@ -135,11 +151,21 @@ public class DataInitialization {
 
             ICAStaffEntity staff1 = new ICAStaffEntity("detan1993", "password", "David", "Tan");
             iCAControllerLocal.createNewStaff(staff1);
-            ICAIdentificationRecordEntity identity1 = new ICAIdentificationRecordEntity("S1234567P", "Mary Tan", identity1IssueDate, identity1ValidityDate, identity1BirthDate, "Permanent Resident");
+            
+            ICAIdentificationRecordEntity identity1 = new ICAIdentificationRecordEntity("S1234566P", "Mary Tan", identity1IssueDate, identity1ValidityDate, identity1BirthDate, "Permanent Resident");
             iCAControllerLocal.createNewIdentificationRecord(identity1);
 
-            ICAIdentificationRecordEntity identity2 = new ICAIdentificationRecordEntity("S9876541G", "David Tan", identity2IssueDate, identity2ValidityDate, identity2BirthDate, "Student Pass");
+            ICAIdentificationRecordEntity identity2 = new ICAIdentificationRecordEntity("S9876542G", "David Tan", identity2IssueDate, identity2ValidityDate, identity2BirthDate, "Student Pass");
             iCAControllerLocal.createNewIdentificationRecord(identity2);
+            
+            
+            ICAIdentificationRecordEntity identity3 = new ICAIdentificationRecordEntity("S932190G", "Larry Lam", identity3IssueDate, null, identity3BirthDate, "Citizen");
+            iCAControllerLocal.createNewIdentificationRecord(identity3);
+            
+             ICAIdentificationRecordEntity identity4 = new ICAIdentificationRecordEntity("G1111111P", "Darren Tan", identity4IssueDate, identity4ValidityDate, identity4BirthDate, "Student Pass");
+            iCAControllerLocal.createNewIdentificationRecord(identity4);
+            
+            
             
 //         public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration, double securityDeposit, double advanceRentalFee, double rentalFee, String[] tenantsId, String houseId);
 //

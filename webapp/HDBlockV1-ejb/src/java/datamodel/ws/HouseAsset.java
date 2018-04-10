@@ -19,32 +19,32 @@ import java.util.ArrayList;
 @XmlRootElement
 @XmlType(name = "houseAsset", propOrder = {
     "$class",
-    "id",
+    "houseId",
+    "address",
     "type",
-    "status",
-    "landlord"
+    "landlord",
 })
 public class HouseAsset {
     private String $class;
-    private String id;
+    private String houseId;
+    private String address;
     private String type;
-    private String status;
     private String landlord;
-
-
     
     public HouseAsset() {
     }
 
-    public HouseAsset(String $class, String id, String type, String status, String landlord) {
+    public HouseAsset(String $class, String houseId, String address, String type, String landlord) {
         this.$class = $class;
-        this.id = id;
+        this.houseId = houseId;
+        this.address = address;
         this.type = type;
-        this.status = status;
         this.landlord = landlord;
     }
     
-      /**
+    
+
+    /**
      * @return the $class
      */
     public String get$class() {
@@ -59,17 +59,31 @@ public class HouseAsset {
     }
 
     /**
-     * @return the id
+     * @return the houseId
      */
-    public String getId() {
-        return id;
+    public String getHouseId() {
+        return houseId;
     }
 
     /**
-     * @param id the id to set
+     * @param houseId the houseId to set
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setHouseId(String houseId) {
+        this.houseId = houseId;
+    }
+
+    /**
+     * @return the address
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     /**
@@ -86,21 +100,7 @@ public class HouseAsset {
         this.type = type;
     }
 
-        /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
-    }
-
     /**
-     * @param status the status to set
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
-            /**
      * @return the landlord
      */
     public String getLandlord() {
@@ -113,5 +113,7 @@ public class HouseAsset {
     public void setLandlord(String landlord) {
         this.landlord = landlord;
     }
-    
+
+
+
 }

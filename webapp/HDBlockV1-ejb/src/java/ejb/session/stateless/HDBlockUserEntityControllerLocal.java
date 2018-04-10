@@ -49,7 +49,7 @@ public interface HDBlockUserEntityControllerLocal {
 
     public List<HDBlockUserEntity> retrieveAllUser();
 
-    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration, double securityDeposit, double advanceRentalFee, double rentalFee, String[] tenantsId, String houseId);
+    public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration, double securityDeposit, double advanceRentalFee, double rentalFee, String[] tenantsId, String tenancyId, String houseId);
 
 
   //  public void retrieveTenancySinatureByTenantId(String tenantIc);
@@ -60,7 +60,8 @@ public interface HDBlockUserEntityControllerLocal {
 
     public List<TenantTenancySignature> retrieveTenancySignature(String tenantIc);
 
-    public boolean SignContract(String signatureId);
+    public boolean SignContract(String signatureId, String agreementId);
+
 
  
 

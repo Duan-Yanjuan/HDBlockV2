@@ -34,7 +34,7 @@ public class ICAIdentificationRecordEntity implements Serializable {
     @Column( nullable = false) 
     private Date issuedDate;
     @Temporal(TemporalType.DATE)
-    @Column( nullable = false) 
+ 
     private Date validityPeriod;
     @Temporal(TemporalType.DATE)
     @Column( nullable = false) 
