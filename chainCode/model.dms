@@ -174,8 +174,7 @@ transaction SignTenancyAgreement {
 }
 
 transaction UpdateTenancyAgreement {
-    -->TenancyAgreement agreement
-    --> Tenant[] tenants
+    --> TenancyAgreement agreement
 }
 
 transaction PayStampDuty {
