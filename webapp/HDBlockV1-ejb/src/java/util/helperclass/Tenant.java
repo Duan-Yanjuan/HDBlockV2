@@ -15,20 +15,20 @@ public class Tenant {
     private String firstName;
     private String lastName;
     private String email;
-    private String tenantStatus;
+    private boolean tenantStatus;
     private String ic;
 
     public Tenant() {
     }
 
-    public Tenant(String firstName, String lastName, String email, String tenantStatus) {
+    public Tenant(String firstName, String lastName, String email, boolean tenantStatus) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.tenantStatus = tenantStatus;
     }
 
-    public Tenant(String firstName, String lastName, String email, String tenantStatus, String ic) {
+    public Tenant(String firstName, String lastName, String email, boolean tenantStatus, String ic) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -36,8 +36,6 @@ public class Tenant {
         this.ic = ic;
     }
     
-    
-
 
     /**
      * @return the firstName
@@ -80,20 +78,7 @@ public class Tenant {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    /**
-     * @return the tenantStatus
-     */
-    public String getTenantStatus() {
-        return tenantStatus;
-    }
-
-    /**
-     * @param tenantStatus the tenantStatus to set
-     */
-    public void setTenantStatus(String tenantStatus) {
-        this.tenantStatus = tenantStatus;
-    }
+    
 
     /**
      * @return the ic
@@ -107,6 +92,20 @@ public class Tenant {
      */
     public void setIc(String ic) {
         this.ic = ic;
+    }
+
+    /**
+     * @return the tenantStatus
+     */
+    public boolean isTenantStatus() {
+        return tenantStatus;
+    }
+
+    /**
+     * @param tenantStatus the tenantStatus to set
+     */
+    public void setTenantStatus(boolean tenantStatus) {
+        this.tenantStatus = tenantStatus;
     }
 
   

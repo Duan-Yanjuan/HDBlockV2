@@ -11,8 +11,8 @@ package util.helperclass;
  */
 public class TenantTenancyAgreement {
     
-    private boolean tenantHasSigned;
-    private String tenantId;
+   // private boolean tenantHasSigned;
+  //  private String tenantId;
     private String tenancyAgreementId;
 //    private String signatureId;
     private int rentalDuration;
@@ -22,36 +22,27 @@ public class TenantTenancyAgreement {
     private String startDate;
     private String dateCreated;
     private String landlordName;
+    private String landlordContact;
     private String houseInformation;
+    private String contractStatus;
 
-    /**
-     * @return the tenantHasSigned
-     */
-    public boolean isTenantHasSigned() {
-        return tenantHasSigned;
+    public TenantTenancyAgreement() {
     }
 
-    /**
-     * @param tenantHasSigned the tenantHasSigned to set
-     */
-    public void setTenantHasSigned(boolean tenantHasSigned) {
-        this.tenantHasSigned = tenantHasSigned;
+    public TenantTenancyAgreement(int rentalDuration, double securityDeposit, double advanceRentalFee, double rentalFee, String startDate, String dateCreated, String landlordName, String landlordContact, String houseInformation, String contractStatus) {
+        this.rentalDuration = rentalDuration;
+        this.securityDeposit = securityDeposit;
+        this.advanceRentalFee = advanceRentalFee;
+        this.rentalFee = rentalFee;
+        this.startDate = startDate;
+        this.dateCreated = dateCreated;
+        this.landlordName = landlordName;
+        this.landlordContact = landlordContact;
+        this.houseInformation = houseInformation;
+        this.contractStatus = contractStatus;
+                
     }
-
-    /**
-     * @return the tenantId
-     */
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    /**
-     * @param tenantId the tenantId to set
-     */
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
+    
     /**
      * @return the tenancyAgreementId
      */
@@ -169,6 +160,34 @@ public class TenantTenancyAgreement {
      */
     public void setHouseInformation(String houseInformation) {
         this.houseInformation = houseInformation;
+    }
+
+    /**
+     * @return the landlordContact
+     */
+    public String getLandlordContact() {
+        return landlordContact;
+    }
+
+    /**
+     * @param landlordContact the landlordContact to set
+     */
+    public void setLandlordContact(String landlordContact) {
+        this.landlordContact = landlordContact;
+    }
+
+    /**
+     * @return the contractStatus
+     */
+    public String getContractStatus() {
+        return contractStatus;
+    }
+
+    /**
+     * @param contractStatus the contractStatus to set
+     */
+    public void setContractStatus(String contractStatus) {
+        this.contractStatus = contractStatus;
     }
     
     

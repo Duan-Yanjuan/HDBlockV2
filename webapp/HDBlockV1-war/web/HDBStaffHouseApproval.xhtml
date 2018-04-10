@@ -18,10 +18,14 @@
                     <h:outputText value="#{houseRequest.requestId}" />
                 </p:column>
                 <p:column headerText="House Id">
-                    <h:outputText value="#{houseRequest.houseId}" />
+                    <h:outputText value="#{houseRequest.identificationNo}" />
                 </p:column>
                 <p:column headerText="Flat Type">
                     <h:outputText value="#{houseRequest.type}" />
+                </p:column>
+                
+                <p:column headerText="House Owner">
+                    <h:outputText value="#{houseRequest.landlord}" />
                 </p:column>
 
                 <p:column style="width:32px;text-align: center">

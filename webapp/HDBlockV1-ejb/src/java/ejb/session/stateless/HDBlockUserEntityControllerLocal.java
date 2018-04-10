@@ -16,6 +16,7 @@ import util.exception.CreateNewUserException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UserNotFoundException;
 import util.helperclass.LandlordTenancyAgreement;
+import util.helperclass.TenantTenancySignature;
 
 /**
  *
@@ -51,11 +52,15 @@ public interface HDBlockUserEntityControllerLocal {
     public boolean createNewTenancyAgreement(Date rentalStartDate, int rentalDuration, double securityDeposit, double advanceRentalFee, double rentalFee, String[] tenantsId, String houseId);
 
 
-    public void retrieveTenancySinatureByTenantId(String tenantIc);
+  //  public void retrieveTenancySinatureByTenantId(String tenantIc);
 
     public List<LandlordTenancyAgreement> retrieveTenancyAgreementByLandlordId(String landlordIC);
 
     public void updateUserIdentity(String userIdentificationNo);
+
+    public List<TenantTenancySignature> retrieveTenancySignature(String tenantIc);
+
+    public boolean SignContract(String signatureId);
 
  
 
