@@ -185,7 +185,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                //CALL COMPOSER REST SERVER TO CREATE NEW USER(TENANT).
                myResource = CLIENT.target(COMPOSER_URL).path("org.acme.hdb.RegisterHouse");
                System.out.println("*********** PATH IS  "  + myResource.getUri());
-               String houseId = newHouse.getPostalCode() + "_" +  newHouse.getUnitNumber();
+               String houseId = newHouse.getPostalCode() + "_" +  newHouse.getUnitNumber().substring(1);
                HouseAsset ha = new HouseAsset("org.acme.hdb.RegisterHouse" , houseId , newHouse.getAddress(), newHouse.getFlatType(), landlordIC);
                System.out.println("********************* HOUSE ID IS " + houseId );
                registerHouseResponse = myResource.request().post(Entity.json(ha));
@@ -541,7 +541,6 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         List<LandlordTenancyAgreement> tenancyAgreements = new ArrayList<>();
         List<Tenant> tenants = new ArrayList<>();
         try {
-
      
             String methodName = "GetTenancyAgreementByLandlordId";
             String landlordId = "resource%3Aorg.acme.hdb.Landlord%23" + landlordIC;
@@ -578,7 +577,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                      
                    //  ONCE I get TENANT ID , I NEED TO QUERY MY DATABASE AGAIN....
                    
-                    String tenancySignature = listOfSignature.getJsonString(i).toString();
+                    String tenancySignature = listOfSignature.getJsonString(j).toString();
                     System.out.println("** tenant signature: " + tenancySignature);
                     tenancySignature = tenancySignature.split("#")[1];
                     System.out.println("the tenant signature ID is: " + tenancySignature);   
@@ -662,13 +661,9 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         
          List<TenantTenancySignature> ts = new ArrayList<>();
 
-
-        //tenantId=resource%3Aorg.acme.hdb.Tenant%23S9876541G
-        
-        //return list of signature  each signature (status )
-       // http://localhost:3000/api/queries/GetTenancySignatureByTenantId?tenantId="resource:org.acme.hdb.Tenant#t1\
-       
-         String tenantFullIC_Path = "resource%3Aorg.acme.hdb.Tenant%23" + tenantIc;
+       try{
+           
+              String tenantFullIC_Path = "resource%3Aorg.acme.hdb.Tenant%23" + tenantIc;
          System.out.println("************* TENANT ID IS " + tenantFullIC_Path );
          WebTarget myResource = CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", tenantFullIC_Path);
          System.out.println("************************** FULL PATH" + CLIENT.target(COMPOSER_URL).path("queries").path("GetTenancySignatureByTenantId").queryParam("tenantId", tenantIc).getUri());
@@ -738,12 +733,74 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                     }
                   }
             }
+       }catch(Exception ex){
+           ex.printStackTrace();
+       }
+      
                    
         return ts;
             //return null;
         
      }
      
+     
+     
+     
+     private boolean checkSignatureCompleteness(String tenancyId){
+          
+
+            System.out.println("*** TENANCY  ID IS " + tenancyId);
+            WebTarget myResource = CLIENT.target(COMPOSER_URL).path("org.acme.hdb.TenancyAgreement").path(tenancyId);
+            System.out.println("**** FULL PATH" + CLIENT.target(COMPOSER_URL).path("org.acme.hdb.TenancyAgreement").path(tenancyId).getUri());
+            Invocation.Builder invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
+            Response response = invocationBuilder.get();
+            int responseStatus = response.getStatus();
+            int noOfTenancyAgreement = 0;
+            int noOfTenantSignature = 0;
+            int signatureList = 0;
+
+
+            System.out.println("*** RESPONSE IS  " + response.getStatusInfo());
+            if (responseStatus == 200) {
+               
+                String tenancyAgreementAssets = invocationBuilder.get(String.class);
+                JsonReader reader = Json.createReader(new StringReader(tenancyAgreementAssets));
+                //JsonArray tenancyAgreeemnt = reader.readArray();
+                  JsonObject tenancyAgreement = reader.readObject();
+
+                  String tenancyAgreementId =  tenancyAgreement.getString("agreementId");
+                  JsonArray listOfSignature =  tenancyAgreement.getJsonArray("signatureList");
+                  signatureList = listOfSignature.size();
+                  System.out.println("************ No of signatue required = " + signatureList  );
+                  for(int i = 0; i< listOfSignature.size(); i++){
+                      //Format of Singature ID is resource:org.acme.hdb.TenancySignature#53101211-12122042018_0
+                   //   String signatureID = listOfSignature.getString(i).substring(39);
+                      String signatureID = tenancyAgreementId + "_" + i;
+                      System.out.println("singature ID is " + signatureID);
+                      myResource = CLIENT.target(COMPOSER_URL).path("org.acme.hdb.TenancySignature").path(signatureID);
+                      invocationBuilder = myResource.request(MediaType.APPLICATION_JSON);
+                      response = invocationBuilder.get();
+                      String tenancySignatureAssets = invocationBuilder.get(String.class);
+                      reader = Json.createReader(new StringReader(tenancySignatureAssets));
+                      JsonObject tenancySignature = reader.readObject();
+                          System.out.println("Is Signed " + tenancySignature.getBoolean("isSigned"));
+                      if(response.getStatus() == 200 && tenancySignature.getBoolean("isSigned") ){
+                          noOfTenantSignature++;
+                      }
+                  }
+                  
+                  
+                  //this means all the tenants in this contract has signed the agreement
+                  if(noOfTenantSignature == signatureList )
+                      return true;
+              
+     
+ 
+                }
+            
+            return false;
+           
+     }
      
      
     
@@ -758,17 +815,22 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         SignContract signContact = new SignContract("org.acme.hdb.SignTenancyAgreement", signatureId);
         signContractResponse = myResource.request().post(Entity.json(signContact));
            
+        //getting tenancy agreement.
+        
             System.out.println("************* Response " + signContractResponse.getStatusInfo());
-             if(signContractResponse.getStatus() == 200){
+            boolean signatureIsComplete = checkSignatureCompleteness(agreementId);
+            if(signContractResponse.getStatus() == 200 && signatureIsComplete){
                  
                  myResource = CLIENT.target(COMPOSER_URL).path("org.acme.hdb.UpdateTenancyAgreement");
                  System.out.println("*full path of updating tenancy agreement " + myResource.getUri() + " agreemennt ID " + agreementId);
                  UpdateTenancyAgreement updateTa = new UpdateTenancyAgreement("org.acme.hdb.UpdateTenancyAgreement" , agreementId);
                  signContractResponse = myResource.request().post(Entity.json(updateTa));
-                  System.out.println("************* Response update tenancy agreement " + signContractResponse.getStatusInfo());
+                  System.out.println("************* Response update tenancy agreement is COMPLETE");
                  
                  return true;
                  
+             }else if(signContractResponse.getStatus() == 200 && !signatureIsComplete){
+                 return true;
              }
         
          return false;
@@ -788,6 +850,16 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
         Response createTenancyAgreementResponse;
         int responseStatus = 0;
         myResource = CLIENT.target(COMPOSER_URL).path(CREATE_TENANCY_AGREEMENT_ASSET_ORG);
+        System.out.println("PATH IS : " +  CREATE_TENANCY_AGREEMENT_ASSET_ORG);
+        System.out.println("TA ID : " +  tenancyId);
+             System.out.println("Rental Start Date : " +  rentalStartDate);
+                  System.out.println("Rental Duration ID : " +  rentalDuration);
+                       System.out.println("Security Deposit: " +  securityDeposit);
+                            System.out.println("advanceRentalFee : " +  advanceRentalFee);
+                            System.out.println("rental fee : " +  rentalFee);
+                            System.out.println("tenants ID : " +  tenantsId[0]);
+                            System.out.println("houseID_Formatted : " +  houseID_Formatted);
+        
         TenancyAgreementAsset taAsset = new TenancyAgreementAsset(CREATE_TENANCY_AGREEMENT_ASSET_ORG, tenancyId, rentalStartDate, rentalDuration, securityDeposit, advanceRentalFee, rentalFee, tenantsId, houseID_Formatted);
 
         createTenancyAgreementResponse = myResource.request().post(Entity.json(taAsset));

@@ -79,6 +79,11 @@ public class ICAForeignIdentityManagedBean implements Serializable{
     }
     
     
+    public void revokeIdentity() {
+        System.out.println("********* IDNEITYT TO BE REVOKE IS " + selectedRecord.getFullname());
+    }
+    
+    
     
     
 }
