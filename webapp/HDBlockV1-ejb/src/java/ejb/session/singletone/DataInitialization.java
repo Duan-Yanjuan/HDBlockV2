@@ -13,6 +13,7 @@ import entity.HDBHouseOwnerRecordEntity;
 import entity.HDBlockUserEntity;
 import entity.ICAIdentificationRecordEntity;
 import entity.ICAStaffEntity;
+import entity.HDBStaffEntity;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -159,6 +160,9 @@ public class DataInitialization {
 
             ICAIdentificationRecordEntity identity4 = new ICAIdentificationRecordEntity("G1111111P", "Darren Tan", identity4IssueDate, identity4ValidityDate, identity4BirthDate, "Student Pass");
             iCAControllerLocal.createNewIdentificationRecord(identity4);
+            
+            HDBStaffEntity hdbStaff1 = new HDBStaffEntity("stephanie", "password", "Stephanie", "Huang");
+            hDBControllerLocal.createNewStaff(hdbStaff1);
 
             Date todayDate = new Date();
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");

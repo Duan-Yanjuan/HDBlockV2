@@ -57,10 +57,10 @@
                         </p:submenu>
                         
                         <p:submenu label="Policy Management" >
-                            <p:menuitem value="HDB Renting Policy" outcome="" icon="ui-icon-search" />
+                            <p:menuitem value="HDB Renting Policy" outcome="HDBStaffPolicy" icon="ui-icon-search" />
                         </p:submenu>
                         
-                        <p:menuitem value="Logout" icon="ui-icon-unlocked"  />
+                         <p:menuitem value="Logout" actionListener="#{hDBUserManagedBean.logout}" icon="ui-icon-unlocked" rendered="#{sessionScope['hdbStaffIsLogin']}" />
                                         
                        
                     </p:menu>
