@@ -62,11 +62,11 @@ rule HDBlockCanCreateAndUpdateStampCertificate {
     action: ALLOW
 }
 
-rule HDBlockCanCreateAndUpdateDepositRecord {
+rule HDBlockCanCreateAndUpdateDepositCertificate {
     description: "HDBlock can read and create everything"
     participant: "org.acme.hdb.HDBlock"
     operation: CREATE, UPDATE
-    resource: "org.acme.hdb.DepositRecord"
+    resource: "org.acme.hdb.DepositCertificate"
     action: ALLOW
 }
 
@@ -152,12 +152,43 @@ rule UpdateTenancyAgreement {
     action: ALLOW
 }
 
+rule ActivateTenancyAgreement {
+    description: "Only HDBlock can update tenancy agreement"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.ActivateTenancyAgreement"
+    action: ALLOW
+}
+
+rule EndTenancyAgreement {
+    description: "Only HDBlock can update tenancy agreement"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.EndTenancyAgreement"
+    action: ALLOW
+}
+
 rule PayStampDuty {
     description: "Only HDBlock can pay stamp duty"
-    participant(p): "org.acme.hdb.HDBlock"
+    participant: "org.acme.hdb.HDBlock"
     operation: CREATE
-    resource(r): "org.acme.hdb.PayStampDuty"
-    condition: (r.agreement.status == 'Signed')
+    resource: "org.acme.hdb.PayStampDuty"
+    action: ALLOW
+}
+
+rule PaySecurityDeposit {
+    description: "Only HDBlock can pay security deposit"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.PaySecurityDeposit"
+    action: ALLOW
+}
+
+rule PayAdvanceFee {
+    description: "Only HDBlock can pay advance rental fee"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.PayAdvanceFee"
     action: ALLOW
 }
 
@@ -239,13 +270,6 @@ rule NetworkAdminSystem {
     action: ALLOW
 }
 
-
-
-
-
-
-
-// double check
 rule HDBCanReadTenancyAgreement {
     description: "Only HDB can read tenancy agreement"
     participant: "org.acme.hdb.HDB"

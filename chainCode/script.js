@@ -7,6 +7,7 @@
  */
 function registerAsTenant(tenant) {
   console.log("############################################################");
+  console.log('Register as tenant');
   return getAssetRegistry('org.acme.hdb.Tenant')
     .then(function(tenantRegistry) { 
     var factory = getFactory(); 
@@ -16,7 +17,6 @@ function registerAsTenant(tenant) {
     newTenant.firstName = tenant.firstName;
     newTenant.lastName = tenant.lastName;
     newTenant.DOB = tenant.DOB;
-    console.log("############################################################");
     return tenantRegistry.add(newTenant);
   })
   .catch(function (error){
@@ -30,9 +30,9 @@ function registerAsTenant(tenant) {
  */
 function registerAsLandlord(landlord) {
   console.log("############################################################");
+  console.log('Register as landlord');
   return getAssetRegistry('org.acme.hdb.Landlord')
     .then(function(landlordRegistry) {
-    console.log('testskflasjfd');
     var factory = getFactory();
     var newLandlord = factory.newResource('org.acme.hdb', 'Landlord', landlord.id);
     newLandlord.id = landlord.id;
@@ -40,7 +40,6 @@ function registerAsLandlord(landlord) {
     newLandlord.firstName = landlord.firstName;
     newLandlord.lastName = landlord.lastName;
     newLandlord.DOB = landlord.DOB;
-    console.log("############################################################");
     return landlordRegistry.add(newLandlord);
   })
     .catch(function (error){
@@ -55,6 +54,9 @@ function registerAsLandlord(landlord) {
 function registerHouse(args) {
   console.log("############################################################");
   var landlord = args.landlord
+  if (landlord.ICStatus != "Valid") {  // only valid landlords can add houses
+    throw new Error("The landlord's IC is not valid!");
+  }
   return getAssetRegistry('org.acme.hdb.House')
     .then(function(houseRegistry) {
     var factory = getFactory();
@@ -125,7 +127,7 @@ function approveHouse(house) {
   console.log("############################################################");
   return getAssetRegistry('org.acme.hdb.House')
     .then(function(houseRegistry) {
-      house.house.status = 'Available';
+      house.house.status = 'Valid';
       console.log("approveHouse: before update wordstate");
       console.log("############################################################");
       return houseRegistry.update(house.house);
@@ -196,6 +198,11 @@ function UpdateHouseStatus(args) {
  */
 function createTenancyAgreement(args) {
   console.log("############################################################");
+  if (args.house.status == "Invalid" || args.house.status == "Pending" ) {
+    throw new Error("The house is not valid!");
+  } else if (args.house.status != "Available") {
+    throw new Error("The house is not available for sale currently!");
+  }
   var landlord = args.house.landlord;
   var tenancyAgreementRegistry;
   var newAgreement;
@@ -227,11 +234,11 @@ function createTenancyAgreement(args) {
     console.log("createTenancyAgreement: " + newAgreement.numOfTenants);
     tenancyAgreementRegistry.add(newAgreement);  
 
-    return getAssetRegistry('org.acme.hdb.Tenant')}) // 
+    return getAssetRegistry('org.acme.hdb.Tenant')}) 
       .then(function(tenantRegistry) {
       tenantList = args.tenants;
       index = 0;
-      return getAssetRegistry('org.acme.hdb.TenancySignature')}) //
+      return getAssetRegistry('org.acme.hdb.TenancySignature')})
         .then(function(tenancySignatureRegistry) {
         var signatureList = [];
         while(index < tenantList.length) {
@@ -239,18 +246,17 @@ function createTenancyAgreement(args) {
           var newSignature = factory.newResource('org.acme.hdb', 'TenancySignature', newAgreement.agreementId + "_" + index);
           newSignature.tenant = tenant;
           newSignature.agreement = newAgreement;
-          tenancySignatureRegistry.add(newSignature); 
+          tenancySignatureRegistry.add(newSignature);  // add a new signature with status of unsigned for each tenant
           index = index + 1;
           signatureList.push(newSignature);
           console.log("add new signature");
           console.log("createTenancyAgreement: " + newSignature.tenant);
           console.log("createTenancyAgreement: " + newSignature.agreement);
         }
-        newAgreement.signatureList = signatureList;
+        newAgreement.signatureList = signatureList; // append the signature list to tenancy agreement
       console.log("createTenancyAgreement: before update wordstate");
       console.log("############################################################");
         return tenancyAgreementRegistry.add(newAgreement);
-    // ????????????????? ask prof why its add
       })
     .catch(function(error) {
     console.log("error" + error.message);
@@ -300,13 +306,12 @@ function updateTenancyAgreement(args) {
         var tenant = signatureList[i].tenant;
         tenant.agreement = args.agreement;
         tenantList.push(tenant);
-        console.log('tenant: ' + tenant.id);
       }
       
       return getAssetRegistry('org.acme.hdb.House')})
       .then(function(houseRegistry) {
         var house = args.agreement.house;
-        house.tenants = tenantList;
+        house.tenants = tenantList;  // append the current tenant to the house
         houseRegistry.update(house);
         console.log("update house");
         console.log(house.tenants);
@@ -318,8 +323,8 @@ function updateTenancyAgreement(args) {
           console.log("tenant: " + tenant.id);
           tenantRegistry.update(tenant);
           }
-      console.log("updateTenancyAgreement: before update wordstate");
-      console.log("############################################################");
+        console.log("updateTenancyAgreement: before update wordstate");
+        console.log("############################################################");
         return true;
       })
   .catch(function (error){
@@ -327,12 +332,60 @@ function updateTenancyAgreement(args) {
   });
 }
 
+
+/**
+ * @param {org.acme.hdb.ActivateTenancyAgreement} Activate Tenancy Agreement (time-triggered event when the start date approaches
+ * @transaction
+ */
+function ActivateTenancyAgreement(args) {
+  console.log("############################################################");
+  var agreement = args.agreement;
+  if (agreement.status != "Valid") {
+    throw new Error("The tenancy agreement is not valid!");
+  } else {
+    return getAssetRegistry('org.acme.hdb.TenancyAgreement')
+    .then(function(agreementRegistry) {
+      var agreement = args.agreement;
+      agreement.status = "Active";
+      return agreementRegistry.update(agreement);
+    })
+    .catch(function (error){
+      console.log("Activate tenancy agreement error: " + error.message);
+    });
+  }
+}
+
+/**
+ * @param {org.acme.hdb.EndTenancyAgreement} Terminate Tenancy Agreement (time-triggered event when the end date approaches
+ * @transaction
+ */
+function EndTenancyAgreement(args) {
+  console.log("############################################################");
+  var agreement = args.agreement;
+  if (agreement.status != "Active") {
+    throw new Error("The tenancy agreement is not active!");
+  } else {
+    return getAssetRegistry('org.acme.hdb.TenancyAgreement')
+    .then(function(agreementRegistry) {
+      agreement.status = "Ended";
+      return agreementRegistry.update(agreement);
+    })
+    .catch(function (error){
+      console.log("end tenancy agreement error: " + error.message);
+    });
+  }
+}
+
+
 /**
  * @param {org.acme.hdb.PayStampDuty} Pay StampDuty
  * @transaction
  */
 function payStampDuty(args) {
   console.log("############################################################");
+  if (args.agreement.status != "Signed") {
+    throw new Error("The tenancy agreement has not been signed");
+  }
   var factory = getFactory();
   var certificate;
 
@@ -342,7 +395,6 @@ function payStampDuty(args) {
     certificate.amount = args.amount;
     certificate.agreement = args.agreement;
     certificate.dateCreated = new Date();
-    console.log(certificate.certificateId);
     stampCertificateRegistry.add(certificate);
   
     return getAssetRegistry('org.acme.hdb.TenancyAgreement')})
@@ -363,21 +415,58 @@ function payStampDuty(args) {
 
 
 /**
- * @param {org.acme.hdb.PayDeposit} Pay Deposit
+ * @param {org.acme.hdb.PaySecurityDeposit} Pay security deposit for the tenancy agreement. The security deposit will be returned back to tenants after end date
  * @transaction
  */
- /*
-function payDeposit() {
+function PaySecurityDeposit(args) {
+  console.log("############################################################");
+  var agreement = args.agreement;
+  if (agreement.status != "Signed" && agreement.status != "Valid") {  // the deposit can be paid only after all tenants sign the tenancy agreement
+    throw new Error("The tenancy agreement has not been signed or is not valid!");
+  } else {
+    var factory = getFactory();
+    var record;
 
+    return getAssetRegistry('org.acme.hdb.DepositCertificate')
+      .then(function(depositCertificateRegistry) {
+      record = factory.newResource('org.acme.hdb', 'DepositCertificate', args.recordId);
+      record.amount = args.amount;
+      record.agreement = args.agreement;
+      record.dateCreated = new Date();
+      depositCertificateRegistry.add(record);
+
+      return getAssetRegistry('org.acme.hdb.TenancyAgreement')})
+      .then(function(agreementRegistry) {
+        var agreement = args.agreement;
+        agreement.depositCertificate = record;
+        agreement.status = "Valid";
+        return agreementRegistry.update(agreement);
+      })
+      .catch(function (error){
+        console.log("paySecurityDeposit error: " + error.message);
+      });
+  }
 }
-*/
+
 
 /**
- * @param {org.acme.hdb.RenewTenancyAgreement} Renew Tenancy Agreement
+ * @param {org.acme.hdb.PayAdvanceFee} Pay security deposit for the tenancy agreement. The security deposit will be returned back to tenants after end date
  * @transaction
  */
- /*
-function renewTenancyAgreement() {
-
+function PayAdvanceFee(args) {
+  console.log("############################################################");
+  var agreement = args.agreement;
+  if (agreement.status != "Signed" && agreement.status != "Valid") {  // the advance fee can be paid only after all tenants sign the tenancy agreement
+    throw new Error("The tenancy agreement has not been signed or is not valid!");
+  } else {
+    return getAssetRegistry('org.acme.hdb.TenancyAgreement')
+    .then(function(agreementRegistry) {
+      agreement.advanceRentalFee = args.amount;
+      return agreementRegistry.update(agreement);
+    })
+    .catch(function (error){
+      console.log("pay security fee error: " + error.message);
+    });
+  }
 }
-*/
+
