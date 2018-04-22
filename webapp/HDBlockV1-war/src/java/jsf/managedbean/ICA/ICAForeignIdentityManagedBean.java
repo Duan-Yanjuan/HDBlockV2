@@ -26,12 +26,6 @@ public class ICAForeignIdentityManagedBean implements Serializable{
     @EJB(name = "ICAControllerLocal")
     private ICAControllerLocal iCAControllerLocal;
 
-    /**
-     * Creates a new instance of ICAForeignIdentityManagedBean
-     */
-    
-    
-    
     private List<ICAIdentificationRecordEntity> records;
     private ICAIdentificationRecordEntity selectedRecord;
    

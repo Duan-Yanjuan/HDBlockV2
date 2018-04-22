@@ -29,46 +29,40 @@ public class UserManagementManagedBean implements Serializable {
     @EJB(name = "HDBlockUserEntityControllerLocal")
     private HDBlockUserEntityControllerLocal hDBlockUserEntityControllerLocal;
 
-    
     private String userEmail;
     private String userPassword;
-    
+
     /**
      * Creates a new instance of UserManagementManagedBean
      */
     public UserManagementManagedBean() {
     }
-    
-     public void login(ActionEvent event) throws IOException
-    {
-        try
-        {
+
+    public void login(ActionEvent event) throws IOException {
+        try {
             HDBlockUserEntity currentUserInformation = hDBlockUserEntityControllerLocal.userLogin(userEmail, userPassword);
-            
+
             FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userIsLogin", true);
             System.err.println("*********user type is " + currentUserInformation.getUserType());
-            
-            if(currentUserInformation.getUserType().equals("tenant")){
-               FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isTenant", true);
-            }else if(currentUserInformation.getUserType().equals("landlord")){
-                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLandlord", true);
+
+            if (currentUserInformation.getUserType().equals("tenant")) {
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isTenant", true);
+            } else if (currentUserInformation.getUserType().equals("landlord")) {
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLandlord", true);
             }
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userInformation", currentUserInformation);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("home.xhtml");            
-        }
-        catch(InvalidLoginCredentialException ex)
-        {
-          //  ex.printStackTrace();
+            FacesContext.getCurrentInstance().getExternalContext().redirect("home.xhtml");
+        } catch (InvalidLoginCredentialException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
         }
     }
-     
-     public void logout(ActionEvent event) throws IOException{
-        
-         ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+
+    public void logout(ActionEvent event) throws IOException {
+
+        ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
         FacesContext.getCurrentInstance().getExternalContext().redirect("Login.xhtml");
-     }
+    }
 
     /**
      * @return the userEmail
@@ -97,6 +91,5 @@ public class UserManagementManagedBean implements Serializable {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
-    
-    
+
 }

@@ -2,125 +2,80 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./template/HDBMasterPage.xhtml"
-                                xmlns:p="http://primefaces.org/ui"
+                xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-         <h:form id="form">
+        <h:form id="form">
 
             <p:growl id="msgs" showDetail="true" />
-           
+
             <p:dataTable id="rentingPolicyTable" var="rentingPolicy" value="#{hDBPolicyManagedBean.rentingPolicies}" editable="true" style="margin-bottom:20px">
                 <f:facet name="header">
                     <h1> HDB Renting Policy </h1>
                 </f:facet>
-                
+
                 <p:ajax event="rowEdit" listener="#{hDBPolicyManagedBean.onRowEdit}" update=":form:msgs" />
                 <p:ajax event="rowEditCancel" listener="#{hDBPolicyManagedBean.onRowCancel}" update=":form:msgs" />
-                
+
                 <p:column headerText="Id">
                     <h:outputText value="#{rentingPolicy.id}" />
                 </p:column>
                 <p:column headerText="Policy Code">
-                     <p:cellEditor>
+                    <p:cellEditor>
                         <f:facet name="output"><h:outputText value="#{rentingPolicy.policyCode}" /></f:facet>
                         <f:facet name="input"><p:inputText id="policyCodeInput" value="#{rentingPolicy.policyCode}" style="width:100%"/></f:facet>
-                     </p:cellEditor>
+                    </p:cellEditor>
                 </p:column>
                 <p:column headerText="Flat Type">
-                     <p:cellEditor>
+                    <p:cellEditor>
                         <f:facet name="output"><h:outputText value="#{rentingPolicy.flatType}" /></f:facet>
                         <f:facet name="input"><p:inputText id="flatTypeInput" value="#{rentingPolicy.flatType}" style="width:100%"/></f:facet>
-                     </p:cellEditor>
+                    </p:cellEditor>
                 </p:column>
                 <p:column headerText="Renting Type">
                     <p:cellEditor>
                         <f:facet name="output"><h:outputText value="#{rentingPolicy.rentingType}" /></f:facet>
                         <f:facet name="input"><p:inputText id="rentingTypeInput" value="#{rentingPolicy.rentingType}" style="width:100%"/></f:facet>
-                     </p:cellEditor>
+                    </p:cellEditor>
                 </p:column>
                 <p:column headerText="Max. Num of Tenants Allowed">
                     <p:cellEditor>
                         <f:facet name="output"><h:outputText value="#{rentingPolicy.maxNumofTenantsAllowed}" /></f:facet>
                         <f:facet name="input"><p:inputText id="maxNumofTenantsAllowedInput" value="#{rentingPolicy.maxNumofTenantsAllowed}" style="width:100%"/></f:facet>
-                     </p:cellEditor>
+                    </p:cellEditor>
                 </p:column>
-                
+
                 <p:column style="width:32px">
-                <p:rowEditor />
+                    <p:rowEditor />
                 </p:column>
             </p:dataTable>
 
-            
+
             <h2>Create New Policy</h2>
-           
-                 <p:messages id="createNewPolicy_error_messages" closable="true"></p:messages>
-                  
 
-                    <br/>
-                    <h:outputLabel  value="" />
-                    <h:outputLabel for="policyCode" value="Policy Code:" />
-                    <p:inputText id="policyCode"   value="#{hDBPolicyManagedBean.newPolicy.policyCode}" label="Policy Code" required="true" requiredMessage="Please enter new policy code."/>
+            <p:messages id="createNewPolicy_error_messages" closable="true"></p:messages>
 
-                    <h:outputLabel for="flatType" value="Flat Type:" />
-                    <p:inputText id="flatType"  value="#{hDBPolicyManagedBean.newPolicy.flatType}" label="Flat Type" required="true" requiredMessage="Please enter flat type."/>
 
-                    <h:outputLabel for="rentingType" value="Renting Type:" />
-                    <p:inputText id="rentingType"  value="#{hDBPolicyManagedBean.newPolicy.rentingType}" label="Renting Type" required="true" requiredMessage="Please enter reting type."/>
+            <br/>
+            <h:outputLabel  value="" />
+            <h:outputLabel for="policyCode" value="Policy Code:" />
+            <p:inputText id="policyCode"   value="#{hDBPolicyManagedBean.newPolicy.policyCode}" label="Policy Code" required="true" requiredMessage="Please enter new policy code."/>
 
-                    <h:outputLabel for="maxNumofTenantsAllowed" value="Max. Num of Tenants Allowed:" />
-                    <p:inputText id="maxNumofTenantsAllowed"  value="#{hDBPolicyManagedBean.newPolicy.maxNumofTenantsAllowed}" label="Max. Num of Tetants Allowed" required="true" requiredMessage="Please enter max. num of tenants allowed." validatorMessage="Invalid Email Address" />
-                    
+            <h:outputLabel for="flatType" value="Flat Type:" />
+            <p:inputText id="flatType"  value="#{hDBPolicyManagedBean.newPolicy.flatType}" label="Flat Type" required="true" requiredMessage="Please enter flat type."/>
 
-                    <p:commandButton value="CreateNewPolicy" action="#{hDBPolicyManagedBean.createNewPolicy}" update="@form" icon="fa fa-arrow-circle-up" oncomplete="PF('createNewPolicyDialog').show()" ajax='false' />
+            <h:outputLabel for="rentingType" value="Renting Type:" />
+            <p:inputText id="rentingType"  value="#{hDBPolicyManagedBean.newPolicy.rentingType}" label="Renting Type" required="true" requiredMessage="Please enter reting type."/>
 
-        
-                  
-            
-            
-            
-            
-            
-            
-        
-            
-            
-            <!--
-        <p:treeTable value="#{ttEditView.root2}" editable="true" editMode="cell" var="document">
-        <f:facet name="header">
-            Cell Editing
-        </f:facet>
- 
-        <p:ajax event="cellEdit" listener="#{ttEditView.onCellEdit}" update=":form:msgs" />
- 
-        <p:column headerText="Policy Code"> 
-            <p:cellEditor>
-                <f:facet name="output"><h:outputText value="#{rentingPolicy.policyCode}" /></f:facet>
-                <f:facet name="input"><p:inputText value="#{rentingPolicy.policyCode}" style="width:100%"/></f:facet>
-            </p:cellEditor>
-        </p:column>
-        <p:column headerText="Flat Type">
-            <p:cellEditor>
-                <f:facet name="output"><h:outputText value="#{rentingPolicy.flatType}" /></f:facet>
-                <f:facet name="input"><p:inputText value="#{rentingPolicy.flatType}" style="width:100%"/></f:facet>
-            </p:cellEditor>
-        </p:column>
-        <p:column headerText="Renting Type">
-            <p:cellEditor>
-                <f:facet name="output"><h:outputText value="#{rentingPolicy.rentingType}" /></f:facet>
-                <f:facet name="input"><p:inputText value="#{rentingPolicy.rebtingType}" style="width:100%"/></f:facet>
-            </p:cellEditor>
-        </p:column>
-        <p:column headerText="Max. Num of Tenants Allowed">
-            <p:cellEditor>
-                <f:facet name="output"><h:outputText value="#{rentingPolicy.maxNumofTenantsAllowedInput}" /></f:facet>
-                <f:facet name="input"><p:inputText value="#{rentingPolicy.maxNumofTenantsAllowedInput}" style="width:100%"/></f:facet>
-            </p:cellEditor>
-        </p:column>
-    </p:treeTable>
-         -->
- 
+            <h:outputLabel for="maxNumofTenantsAllowed" value="Max. Num of Tenants Allowed:" />
+            <p:inputText id="maxNumofTenantsAllowed"  value="#{hDBPolicyManagedBean.newPolicy.maxNumofTenantsAllowed}" label="Max. Num of Tetants Allowed" required="true" requiredMessage="Please enter max. num of tenants allowed." validatorMessage="Invalid Email Address" />
+
+
+            <p:commandButton value="CreateNewPolicy" action="#{hDBPolicyManagedBean.createNewPolicy}" update="@form" icon="fa fa-arrow-circle-up" oncomplete="PF('createNewPolicyDialog').show()" ajax='false' />
+
+
 
         </h:form>
     </ui:define>

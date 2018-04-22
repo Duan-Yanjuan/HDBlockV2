@@ -50,7 +50,7 @@ public class TenancyAgreementManagedBean implements Serializable {
 
     //for retrieval
     private List<LandlordTenancyAgreement> landlordTenancyAgreements;
-   // private List<TenantTenancyAgreement> tenantTenancyAgreements;
+    // private List<TenantTenancyAgreement> tenantTenancyAgreements;
     private List<TenantTenancySignature> tenantSignature;
     private LandlordTenancyAgreement selectedTenancy;
     private TenantTenancySignature selectedTenancySign;
@@ -93,11 +93,9 @@ public class TenancyAgreementManagedBean implements Serializable {
             System.out.println("******** House IS " + landlordHouseInformation.getAddress());
         } else if (isTenant) {
             System.out.println("******** inside uisTenant");
-            tenantSignature =  hDBlockUserEntityControllerLocal.retrieveTenancySignature(userInfo.getIdentificationNo());
+            tenantSignature = hDBlockUserEntityControllerLocal.retrieveTenancySignature(userInfo.getIdentificationNo());
         }
 
-        //  HDBlockUserEntity userInformation = (HDBlockUserEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userInformation");
-        //   tenancyAgreements = hDBlockUserEntityControllerLocal.retrieveTenancyAgreementByLandlordId(userInformation.getIdentificationNo());
     }
 
     public void add_tenant(ActionEvent event) {
@@ -105,21 +103,18 @@ public class TenancyAgreementManagedBean implements Serializable {
         System.out.println("********** TENANT SIZE " + tenants.size() + " tenant is " + tenants.get(0));
     }
 
-    
-    public void signContract(ActionEvent event){
+    public void signContract(ActionEvent event) {
         System.out.println("********** SIGNING CONTRACT SELECTED SINGATURE  " + selectedTenancySign.getSignatureId());
-        if(hDBlockUserEntityControllerLocal.SignContract(selectedTenancySign.getSignatureId() , selectedTenancySign.getAgreement())){
-             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Contract Signed Succesfully", null));
-              HDBlockUserEntity userInfo = (HDBlockUserEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userInformation");
-             tenantSignature =  hDBlockUserEntityControllerLocal.retrieveTenancySignature(userInfo.getIdentificationNo());
-        }else
-             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail to Sign.", null));
- 
-    }
-  
+        if (hDBlockUserEntityControllerLocal.SignContract(selectedTenancySign.getSignatureId(), selectedTenancySign.getAgreement())) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Contract Signed Succesfully", null));
+            HDBlockUserEntity userInfo = (HDBlockUserEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userInformation");
+            tenantSignature = hDBlockUserEntityControllerLocal.retrieveTenancySignature(userInfo.getIdentificationNo());
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail to Sign.", null));
+        }
 
-    
-    
+    }
+
     public void submitTa() {
 
         // 53070909108_01012018)
@@ -140,10 +135,10 @@ public class TenancyAgreementManagedBean implements Serializable {
         }
         System.out.println("********** RENTAL DATE " + rentalDate);
         String tenancyId = landlordHouseInformation.getPostalCode() + landlordHouseInformation.getUnitNumber().substring(1) + todayDateFormated[0] + todayDateFormated[1] + todayDateFormated[2];
-        String houseId = landlordHouseInformation.getPostalCode() + "_" +  landlordHouseInformation.getUnitNumber().substring(1);
+        String houseId = landlordHouseInformation.getPostalCode() + "_" + landlordHouseInformation.getUnitNumber().substring(1);
         System.out.println("Tenancy ID " + tenancyId);
         System.out.println("********** SUBMIT" + tenants.size() + taAsset.getRentalFee());
-        boolean createResult = hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate, taAsset.getDuration(), taAsset.getSecurityDeposit(), taAsset.getAdvanceRentalFee(), taAsset.getRentalFee(), tenantsId, tenancyId , houseId);
+        boolean createResult = hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate, taAsset.getDuration(), taAsset.getSecurityDeposit(), taAsset.getAdvanceRentalFee(), taAsset.getRentalFee(), tenantsId, tenancyId, houseId);
         if (createResult) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Tenancy Agreement is created succesfully", null));
         } else {
@@ -238,8 +233,6 @@ public class TenancyAgreementManagedBean implements Serializable {
     public void setLandlordTenancyAgreements(List<LandlordTenancyAgreement> landlordTenancyAgreements) {
         this.landlordTenancyAgreements = landlordTenancyAgreements;
     }
-
-
 
     /**
      * @return the isLandlord

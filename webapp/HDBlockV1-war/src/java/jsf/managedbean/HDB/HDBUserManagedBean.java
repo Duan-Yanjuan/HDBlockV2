@@ -33,10 +33,10 @@ public class HDBUserManagedBean {
      */
     private String userEmail;
     private String userPassword;
-    
+
     public HDBUserManagedBean() {
     }
-    
+
     /**
      * @return the userEmail
      */
@@ -64,30 +64,24 @@ public class HDBUserManagedBean {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
-    
-    
-     public void login (ActionEvent event) throws IOException    {
-        
-      try{
-            
-           HDBStaffEntity staffInformation = hDBControllerLocal.staffLogin(userEmail, userPassword);
-           FacesContext.getCurrentInstance().getExternalContext().redirect("HDBStaffHome.xhtml");            
-        
-           
-        }catch(InvalidLoginCredentialException ex){
-           FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
-        }
-            
-          
-         
-       
-    }
-    
-     public void logout(ActionEvent event) throws IOException{
-        
-         ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-        FacesContext.getCurrentInstance().getExternalContext().redirect("HDBStaffLogin.xhtml");
-     }
 
-    
+    public void login(ActionEvent event) throws IOException {
+
+        try {
+
+            HDBStaffEntity staffInformation = hDBControllerLocal.staffLogin(userEmail, userPassword);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("HDBStaffHome.xhtml");
+
+        } catch (InvalidLoginCredentialException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
+        }
+
+    }
+
+    public void logout(ActionEvent event) throws IOException {
+
+        ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("HDBStaffLogin.xhtml");
+    }
+
 }

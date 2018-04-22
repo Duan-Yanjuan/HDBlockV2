@@ -31,13 +31,9 @@ public class ICAUserManagedBean {
     /**
      * Creates a new instance of ICAUserManagedBean
      */
-    
-    
-    
-        private String userEmail;
+    private String userEmail;
     private String userPassword;
-    
-    
+
     public ICAUserManagedBean() {
     }
 
@@ -68,42 +64,24 @@ public class ICAUserManagedBean {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
-    
-    
-    public void login (ActionEvent event) throws IOException    {
-        
-        try{
-            
-             ICAStaffEntity staffInformation = iCAControllerLocal.staffLogin(userEmail, userPassword);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("ICAStaffHome.xhtml");            
-        
-           
-        }catch(InvalidLoginCredentialException ex){
-          FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
-        }
-            
-          /*  FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userIsLogin", true);
-            System.err.println("*********user type is " + currentUserInformation.getUserType());
-            
-            if(currentUserInformation.getUserType().equals("tenant")){
-               FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isTenant", true);
-            }else if(currentUserInformation.getUserType().equals("landlord")){
-                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLandlord", true);
-            }
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userInformation", currentUserInformation);*/
-          
-         
-       
-    }
-    
-     public void logout(ActionEvent event) throws IOException{
-        
-         ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-        FacesContext.getCurrentInstance().getExternalContext().redirect("ICAStaffLogin.xhtml");
-     }
 
-    
-    
-    
+    public void login(ActionEvent event) throws IOException {
+
+        try {
+
+            ICAStaffEntity staffInformation = iCAControllerLocal.staffLogin(userEmail, userPassword);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("ICAStaffHome.xhtml");
+
+        } catch (InvalidLoginCredentialException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
+        }
+
+    }
+
+    public void logout(ActionEvent event) throws IOException {
+
+        ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("ICAStaffLogin.xhtml");
+    }
+
 }

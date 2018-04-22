@@ -101,9 +101,8 @@ public class HDBPolicyManagedBean implements Serializable {
     public ArrayList<HDBRentingPolicyEntity> getPoliciesByPolicyCode(String policyCode) {
         // Store all results
         ArrayList<HDBRentingPolicyEntity> result = new ArrayList<HDBRentingPolicyEntity>();
-        // Check through each existing policy
+    
         for (HDBRentingPolicyEntity h : rentingPolicies) {
-            // If the policy contains the code we want, store as a result
             if (policyCode.equals(h.getPolicyCode())) {
                 result.add(h);
             }
