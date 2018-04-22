@@ -13,6 +13,8 @@ import javax.faces.view.ViewScoped;
 import java.util.List;
 import java.util.ArrayList;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import util.helperclass.PendingHouse;
 
 /**
@@ -33,7 +35,7 @@ public class HDBHouseRequestManagedBean implements Serializable {
     private List<PendingHouse> houseRequest;
     private PendingHouse selectedHouse;
     private String validityMessage;
-    
+  
     
     
     public HDBHouseRequestManagedBean() {
@@ -101,6 +103,7 @@ public class HDBHouseRequestManagedBean implements Serializable {
           
            if(statusIsApproved){
                validityMessage = "Validity has been approved.";
+               houseRequest = hDBControllerLocal.retrieveHouseWithPendingStatus();
            }
             
         }catch(Exception ex){
@@ -109,5 +112,8 @@ public class HDBHouseRequestManagedBean implements Serializable {
         }
         
     }
+       
+       
+           
     
 }

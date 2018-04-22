@@ -27,9 +27,20 @@
                 <p:column headerText="House Owner">
                     <h:outputText value="#{houseRequest.landlord}" />
                 </p:column>
+                
+                <p:column headerText="IC Expiry Date">
+                    <h:outputText value="#{houseRequest.landlordICValidityPeriod}" />
+                </p:column>
+                
+                <p:column headerText="Owner Validity">
+                    <h:outputText value="#{houseRequest.isHouseOwnerValid}" />
+                </p:column>
 
                 <p:column style="width:32px;text-align: center">
-                    <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('requestDialog').show()"  title="View">
+                    <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('requestDialog').show()"  title="Approve">
+                        <f:setPropertyActionListener value="#{houseRequest}" target="#{hDBHouseRequestManagedBean.selectedHouse}" />
+                    </p:commandButton>
+                    <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('requestDialog').show()"  title="Reject">
                         <f:setPropertyActionListener value="#{houseRequest}" target="#{hDBHouseRequestManagedBean.selectedHouse}" />
                     </p:commandButton>
                 </p:column>
@@ -45,6 +56,7 @@
 
                 <h:outputText style="font-size:medium;" value="Process Result: " />
                 <h:outputText style="font-size:medium;"  value="#{hDBHouseRequestManagedBean.validityMessage}" />
+
             </p:dialog>
 
         </h:form>

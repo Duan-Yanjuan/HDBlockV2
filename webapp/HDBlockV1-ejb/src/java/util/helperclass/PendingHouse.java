@@ -19,17 +19,20 @@ public class PendingHouse {
     private String type;
     private String address;
     private String landlord;
-    
+    private String landlordICValidityPeriod;
+    private boolean isHouseOwnerValid;
     
     public PendingHouse() {
     }
 
-    public PendingHouse(int requestId, String identificationNo, String address, String type, String landlord) {
+    public PendingHouse(int requestId, String identificationNo, String address, String type, String landlord, String landlordICValidityPeriod, boolean isHouseOwnerValid ) {
         this.requestId = requestId;
         this.identificationNo = identificationNo;
         this.type = type;
         this.address = address;
         this.landlord = landlord;
+        this.landlordICValidityPeriod = landlordICValidityPeriod;
+        this.isHouseOwnerValid = isHouseOwnerValid;
     }
     
         /**
@@ -101,6 +104,33 @@ public class PendingHouse {
      */
     public void setLandlord(String landlord) {
         this.landlord = landlord;
+    }
+    
+         
+         
+    public String getLandlordICValidityPeriod() {
+        return landlordICValidityPeriod;
+    }
+
+    /**
+     * @param landlordICValidityPeriod the landlordICValidityPeriod to set
+     */
+    public void setLandlordICValidityPeriod(String landlordICValidityPeriod) {
+        this.landlordICValidityPeriod = landlordICValidityPeriod;
+    }
+    
+        /**
+     * @return the isHouseOwnerValid
+     */
+    public boolean getIsHouseOwnerValid() {
+        return isHouseOwnerValid;
+    }
+
+    /**
+     * @param lanisHouseOwnerValiddlord the isHouseOwnerValid to set
+     */
+    public void setIsHouseOwnerValid(boolean isHouseOwnerValid) {
+        this.isHouseOwnerValid = isHouseOwnerValid;
     }
 
     

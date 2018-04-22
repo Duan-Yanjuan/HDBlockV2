@@ -10,8 +10,12 @@ import entity.HDBStaffEntity;
 import entity.HDBRentingPolicyEntity;
 import entity.HDBHouseEntity;
 import entity.HDBHouseOwnerRecordEntity;
+import entity.HDBlockUserEntity;
+import entity.ICAIdentificationRecordEntity;
 import util.helperclass.PendingHouse;
 import java.io.StringReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -36,6 +40,7 @@ import util.exception.StaffNotFoundException;
 import util.security.CryptographicHelper;
 import util.exception.CreateNewPolicyException;
 import util.exception.HDBRecordNotFoundException;
+import util.exception.ICRecordNotFoundException;
 
 
 
@@ -168,6 +173,8 @@ public class HDBController implements HDBControllerLocal {
          String address = "";
          String status = "";
          String landlord = "";
+         String landlordICValidityPeriod = "";
+         boolean isHouseOwnerValid = false;  
             
          //GETTING HOUSE VALUE
             if (responseStatus == 200) {
@@ -182,11 +189,12 @@ public class HDBController implements HDBControllerLocal {
                     type = houses.getJsonObject(i).getString("type");
                     address = houses.getJsonObject(i).getString("address");
                     status =  houses.getJsonObject(i).getString("status");
-                    landlord =  houses.getJsonObject(i).getString("landlord");
-                   
+                    landlord =  houses.getJsonObject(i).getString("landlord").substring(31);
+                    landlordICValidityPeriod = checkIdentificationValidityPeriod(landlord);
+                    isHouseOwnerValid = checkHouseValidity(houseId,landlord);    
                     
                     if(status.equals("Pending")){  
-                         housesWithPendingStatus.add(new PendingHouse(i+1, houseId, type, address, landlord));
+                         housesWithPendingStatus.add(new PendingHouse(i+1, houseId, type, address, landlord, landlordICValidityPeriod, isHouseOwnerValid));
                     }
                 
                     System.out.println("**************** House ID[" + i + "] is " + houseId );
@@ -194,6 +202,8 @@ public class HDBController implements HDBControllerLocal {
                     System.out.println("**************** Address[" + i + "] is " + address);
                     System.out.println("**************** Status[" + i + "] is " + status);
                     System.out.println("**************** Landlord[" + i + "] is " + landlord);
+                    System.out.println("**************** landlordICValidityPeriod[" + i + "] is " + landlordICValidityPeriod);
+                    System.out.println("**************** isHouseOwnerValid[" + i + "] is " + isHouseOwnerValid);
 
                 }
             }
@@ -224,14 +234,12 @@ public class HDBController implements HDBControllerLocal {
         */
  
         String houseId = "";
-        String type  ="";
         String landlordNRIC = "";
         
         try{
             
         System.out.println("************* processHouseValidity " + house.getIdentificationNo());
         houseId = house.getIdentificationNo();  //change to value return in json format later on
-        type = house.getType();
         landlordNRIC = house.getLandlord();
      
       
@@ -258,6 +266,8 @@ public class HDBController implements HDBControllerLocal {
               return false;
     } 
     
+    
+    
     private void updateHouseAsset(String id, String path, String status ){
         
                
@@ -281,9 +291,12 @@ public class HDBController implements HDBControllerLocal {
     {
        
         
-            Query query = em.createQuery("SELECT i FROM HDBHouseOwnerRecordEntity i WHERE i.houseId = :houseId");
-            query.setParameter("houseId", houseId);
+            Query query = em.createQuery("SELECT i FROM HDBHouseOwnerRecordEntity i WHERE i.Nric = :landlordNRIC");
+            query.setParameter("landlordNRIC", landlordNRIC);
             List<HDBHouseOwnerRecordEntity> record = query.getResultList();
+            String recordNric = record.get(0).getNRIC();
+            String recordHouseId = record.get(0).getPostalCode() + "_" + record.get(0).getUnitNo().substring(1);
+            System.out.println(recordHouseId);
             
             
             if(record.isEmpty()){
@@ -291,7 +304,7 @@ public class HDBController implements HDBControllerLocal {
             }
             else
             {
-               if(record.get(0).getNRIC().equals(landlordNRIC)) 
+               if(recordNric.equals(landlordNRIC) && recordHouseId.equals(houseId)) 
                 {
                     return true;
                 }
@@ -299,8 +312,7 @@ public class HDBController implements HDBControllerLocal {
                 {
                     throw new HDBRecordNotFoundException("House information does not match the existing record.");
                 }
-                
-                
+                              
             }
                
        }
@@ -316,6 +328,35 @@ public class HDBController implements HDBControllerLocal {
            return newOwner;
        }    
     
+       
+
+    public String checkIdentificationValidityPeriod(String identificationNumber) throws ICRecordNotFoundException {
+
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        Query query = em.createQuery("SELECT i FROM ICAIdentificationRecordEntity i WHERE i.nric = :ic");
+        query.setParameter("ic", identificationNumber);
+        List<ICAIdentificationRecordEntity> record = query.getResultList();
+
+        if (record.isEmpty()) {
+            throw new ICRecordNotFoundException("Non-Existence of Such Identity Number");
+        } else {
+            System.out.println("***************** IC STATUS FOUND");
+            String validityPeriod_String = df.format(record.get(0).getValidityPeriod());
+            System.out.println("***************** VALIDITY PERIOD IN DATA BASE " + validityPeriod_String);
+            
+           
+            if (record.get(0).getNric().equals(identificationNumber))
+            {
+                return validityPeriod_String;
+            } else {
+                throw new ICRecordNotFoundException("Mismatch of Information with His/Her Identity Numebr");
+            }
+
+        }
+
+    }
+       
+       
     
     
 }
