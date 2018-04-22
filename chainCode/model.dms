@@ -70,7 +70,7 @@ asset TenancyAgreement identified by agreementId {
     o Double securityDeposit   // check what is this  can delete
     o Double advanceRentalFee  // check whether need this   can delete
     o Double rentalFee
-    o String status default = "Pending" // Pending, Signed, Active, End, Invalid
+    o String status default = "Pending" // Pending, Signed, valid, Active, End, Invalid
     o Integer numOfTenants default = 0
     o Boolean isStampDutyPaid default = false
     --> StampCertificate stampCertificate optional

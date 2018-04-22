@@ -2,17 +2,76 @@
  * HDBlock access control file
  */
 
-// HDBlock acts on behalf of Tenants and Landlords
 
-// access permission to resources
-rule HDBlockCanAccessEverything {
+// access permission to assets
+
+// HDBlock (acts on behalf of Tenants and Landlords)
+rule HDBlockCanReadEverything {
     description: "HDBlock can read and create everything"
     participant: "org.acme.hdb.HDBlock"
-    operation: READ, CREATE, UPDATE
+    operation: READ
     resource: "org.acme.hdb.*"
     action: ALLOW
 }
 
+rule HDBlockCanCreateTenant {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.Tenant"
+    action: ALLOW
+}
+
+rule HDBlockCanCreateLandlord {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.Landlord"
+    action: ALLOW
+}
+
+rule HDBlockCanCreateHouse {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.House"
+    action: ALLOW
+}
+
+rule HDBlockCanCreateAndUpdateTenancyAgreement {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE, UPDATE
+    resource: "org.acme.hdb.TenancyAgreement"
+    action: ALLOW
+}
+
+rule HDBlockCanCreateAndUpdateTenancySignature {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE, UPDATE
+    resource: "org.acme.hdb.TenancySignature"
+    action: ALLOW
+}
+
+rule HDBlockCanCreateAndUpdateStampCertificate {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE, UPDATE
+    resource: "org.acme.hdb.StampCertificate"
+    action: ALLOW
+}
+
+rule HDBlockCanCreateAndUpdateDepositRecord {
+    description: "HDBlock can read and create everything"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE, UPDATE
+    resource: "org.acme.hdb.DepositRecord"
+    action: ALLOW
+}
+
+
+// ICA
 rule ICACanAccessLandlord {
     description: "ICA can read and update landlord"
     participant: "org.acme.hdb.ICA"
@@ -29,42 +88,27 @@ rule ICACanAccessTenant {
     action: ALLOW
 }
 
+// HDB
 rule HDBCanAccessHouse {
     description: "HDB can read and update house"
     participant: "org.acme.hdb.HDB"
-    operation: READ, UPDATE, CREATE
+    operation: READ, UPDATE
     resource: "org.acme.hdb.House"
     action: ALLOW
 }
-
-// double check
-rule HDBCanReadTenancyAgreement {
-    description: "Only HDB can read tenancy agreement"
-    participant: "org.acme.hdb.HDB"
-    operation: READ
-    resource: "org.acme.hdb.TenancyAgreement"
-    action: ALLOW
-}
-//end of access permission
 
 
 
 
 
 // issue transaction 
+
+// HDBlock
 rule RegisterAsTenant {
     description: "Only HDBlock can register as tenant"
     participant: "org.acme.hdb.HDBlock"
     operation: CREATE
     resource: "org.acme.hdb.RegisterAsTenant"
-    action: ALLOW
-}
-
-rule ApproveIdentityForTenant {
-    description: "Only ICA can approve identity for tenant"
-    participant: "org.acme.hdb.ICA"
-    operation: CREATE
-    resource: "org.acme.hdb.ApproveTenantIdentity"
     action: ALLOW
 }
 
@@ -76,14 +120,6 @@ rule RegisterAsLandlord {
     action: ALLOW
 }
 
-rule ApproveIdentityForLandlord {
-    description: "Only ICA can approve identity for landlord"
-    participant: "org.acme.hdb.ICA"
-    operation: CREATE
-    resource: "org.acme.hdb.ApproveLandlordIdentity"
-    action: ALLOW
-}
-
 rule RegisterHouse {
     description: "Only HDBlock can register a house"
     participant: "org.acme.hdb.HDBlock"
@@ -92,11 +128,54 @@ rule RegisterHouse {
     action: ALLOW
 }
 
-rule ApproveHouse {
-    description: "Only HDB can approve house"
-    participant: "org.acme.hdb.HDB"
+rule CreteTenancyAgreement {
+    description: "Only HDBlock can create tenancy agreement"
+    participant: "org.acme.hdb.HDBlock"
     operation: CREATE
-    resource: "org.acme.hdb.ApproveHouse"
+    resource: "org.acme.hdb.CreateTenancyAgreement"
+    action: ALLOW
+}
+
+rule SignTenancyAgreement {
+    description: "Only HDBlock can sign tenancy agreement"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.SignTenancyAgreement"
+    action: ALLOW
+}
+
+rule UpdateTenancyAgreement {
+    description: "Only HDBlock can update tenancy agreement"
+    participant: "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource: "org.acme.hdb.UpdateTenancyAgreement"
+    action: ALLOW
+}
+
+rule PayStampDuty {
+    description: "Only HDBlock can pay stamp duty"
+    participant(p): "org.acme.hdb.HDBlock"
+    operation: CREATE
+    resource(r): "org.acme.hdb.PayStampDuty"
+    condition: (r.agreement.status == 'Signed')
+    action: ALLOW
+}
+
+
+// ICA
+rule ApproveIdentityForTenant {
+    description: "Only ICA can approve identity for tenant"
+    participant: "org.acme.hdb.ICA"
+    operation: CREATE
+    resource: "org.acme.hdb.ApproveTenantIdentity"
+    action: ALLOW
+}
+
+rule ApproveIdentityForLandlord {
+    description: "Only ICA can approve identity for landlord"
+    participant: "org.acme.hdb.ICA"
+    operation: CREATE
+    resource: "org.acme.hdb.ApproveLandlordIdentity"
     action: ALLOW
 }
 
@@ -116,6 +195,18 @@ rule UpdateLandlordStatus {
     action: ALLOW
 }
 
+
+
+// HDB
+
+rule ApproveHouse {
+    description: "Only HDB can approve house"
+    participant: "org.acme.hdb.HDB"
+    operation: CREATE
+    resource: "org.acme.hdb.ApproveHouse"
+    action: ALLOW
+}
+
 rule UpdateHouseStatus {
     description: "Only HDB can update house status"
     participant: "org.acme.hdb.HDB"
@@ -123,51 +214,6 @@ rule UpdateHouseStatus {
     resource: "org.acme.hdb.UpdateHouseStatus"
     action: ALLOW
 }
-
-rule CreteTenancyAgreement {
-    description: "Only HDBlock can create tenancy agreement"
-    participant(p): "org.acme.hdb.HDBlock"
-    operation: CREATE
-    resource(r): "org.acme.hdb.CreateTenancyAgreement"
-    condition: (r.house.landlord.ICStatus == 'Valid')
-    action: ALLOW
-}
-
-rule SignTenancyAgreement {
-    description: "Only HDBlock can sign tenancy agreement"
-    participant(p): "org.acme.hdb.HDBlock"
-    operation: CREATE
-    resource(r): "org.acme.hdb.SignTenancyAgreement"
-    condition: (r.signature.tenant.ICStatus == "Valid")
-    action: ALLOW
-}
-
-rule UpdateTenancyAgreement {
-    description: "Only HDBlock can update tenancy agreement"
-    participant: "org.acme.hdb.HDBlock"
-    operation: CREATE
-    resource: "org.acme.hdb.SignTenancyAgreement"
-    action: ALLOW
-}
-
-
-
-
-
-/*
-rule PayStampDuty {
-    description: "Only HDBlock can pay stamp duty"
-    participant: "org.acme.hdb.HDBlock"
-    operation: CREATE
-    resource(r): "org.acme.hdb.PayStampDuty"
-    condition: (r.agreement.status == 'Signed')
-    action: ALLOW
-}
-*/
-
-
-
-
 
 rule SystemACL {
   description:  "System ACL to permit all access"
@@ -192,3 +238,20 @@ rule NetworkAdminSystem {
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
+
+
+
+
+
+
+
+// double check
+rule HDBCanReadTenancyAgreement {
+    description: "Only HDB can read tenancy agreement"
+    participant: "org.acme.hdb.HDB"
+    operation: READ
+    resource: "org.acme.hdb.TenancyAgreement"
+    action: ALLOW
+}
+//end of access permission
+

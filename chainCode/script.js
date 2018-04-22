@@ -19,8 +19,8 @@ function registerAsTenant(tenant) {
     console.log("############################################################");
     return tenantRegistry.add(newTenant);
   })
-  .catch(function (errir){
-    concole.log("registerAsTenant error: " + error.message);
+  .catch(function (error){
+    console.log("registerAsTenant error: " + error.message);
   });
 }
 
@@ -43,8 +43,8 @@ function registerAsLandlord(landlord) {
     console.log("############################################################");
     return landlordRegistry.add(newLandlord);
   })
-    .catch(function (errir){
-    concole.log("registerAsLandlord error: " + error.message);
+    .catch(function (error){
+    console.log("registerAsLandlord error: " + error.message);
   });
 }
 
@@ -74,8 +74,8 @@ function registerHouse(args) {
       return landlordRegistry.update(landlord);
     });
   })
-  .catch(function (errir){
-    concole.log("registerHouse error: " + error.message);
+  .catch(function (error){
+    console.log("registerHouse error: " + error.message);
   });
 }
 
@@ -93,8 +93,8 @@ function approveTenantIdentity(args) {
     console.log("############################################################");
     return tenantRegistry.update(tenant);
   })
-  .catch(function (errir){
-    concole.log("approveTenantIdentity error: " + error.message);
+  .catch(function (error){
+    console.log("approveTenantIdentity error: " + error.message);
   });
 }
 
@@ -112,8 +112,8 @@ function approveLandlordIdentity(args) {
     console.log("############################################################");
     return landlordRegistry.update(landlord);
   })
-  .catch(function (errir){
-    concole.log("approveLandlordIdentity error: " + error.message);
+  .catch(function (error){
+    console.log("approveLandlordIdentity error: " + error.message);
   });
 }
 
@@ -130,8 +130,8 @@ function approveHouse(house) {
       console.log("############################################################");
       return houseRegistry.update(house.house);
   })
-  .catch(function (errir){
-    concole.log("approveHouse error: " + error.message);
+  .catch(function (error){
+    console.log("approveHouse error: " + error.message);
   });
 }
 
@@ -148,8 +148,8 @@ function UpdateTenantStatus(args) {
       console.log("############################################################");
       return tenantRegistry.update(args.tenant);
   })
-  .catch(function (errir){
-    concole.log("UpdateTenantStatus error: " + error.message);
+  .catch(function (error){
+    console.log("UpdateTenantStatus error: " + error.message);
   });
 }
 
@@ -166,8 +166,8 @@ function UpdateLandlordStatus(args) {
       console.log("############################################################");
       return landlordRegistry.update(args.landlord);
   })
-  .catch(function (errir){
-    concole.log("UpdateLandlordStatus error: " + error.message);
+  .catch(function (error){
+    console.log("UpdateLandlordStatus error: " + error.message);
   });
 }
 
@@ -184,8 +184,8 @@ function UpdateHouseStatus(args) {
       console.log("############################################################");
       return houseRegistry.update(args.house);
   })
-  .catch(function (errir){
-    concole.log("UpdateHouseStatus error: " + error.message);
+  .catch(function (error){
+    console.log("UpdateHouseStatus error: " + error.message);
   });
 }
 
@@ -255,8 +255,8 @@ function createTenancyAgreement(args) {
     .catch(function(error) {
     console.log("error" + error.message);
   })
-  .catch(function (errir){
-    concole.log("createTenancyAgreement error: " + error.message);
+  .catch(function (error){
+    console.log("createTenancyAgreement error: " + error.message);
   });
 }
 
@@ -273,8 +273,8 @@ function signTenancyAgreement(args) {
     console.log("############################################################");
     return tenancySignatureRegistry.update(args.signature);
   })
-  .catch(function (errir){
-    concole.log("signTenancyAgreement error: " + error.message);
+  .catch(function (error){
+    console.log("signTenancyAgreement error: " + error.message);
   });
 }
 
@@ -322,8 +322,8 @@ function updateTenancyAgreement(args) {
       console.log("############################################################");
         return true;
       })
-  .catch(function (errir){
-    concole.log("updateTenancyAgreement error: " + error.message);
+  .catch(function (error){
+    console.log("updateTenancyAgreement error: " + error.message);
   });
 }
 
@@ -350,13 +350,14 @@ function payStampDuty(args) {
       var agreement = args.agreement;
       agreement.isStampDutyPaid = true;
       agreement.stampCertificate = certificate;
+      agreement.status = "Valid";
       console.log(agreement.agreementId);
       console.log("payStampDuty: before update wordstate");
       console.log("############################################################");
       return agreementRegistry.update(agreement);
     })
-  .catch(function (errir){
-    concole.log("payStampDuty error: " + error.message);
+  .catch(function (error){
+    console.log("payStampDuty error: " + error.message);
   });
 }
 
@@ -378,31 +379,5 @@ function payDeposit() {
  /*
 function renewTenancyAgreement() {
 
-}
-*/
-
-/**
- * @param {org.acme.hdb.GetAllPendingTenants} get all pending tenants (for ICA to use)
- * @transaction
- */
-/*
-function getAllPendingTenants() {
-  return getAssetRegistry('org.acme.hdb.Tenant')
-  .then(function(tenantRegistry) {
-    var allTenants = tenantRegistry.getAll();
-    console.log(allTenants);
-    var allTenants1 = tenantRegistry.resolveAll();
-    console.log(allTenants1);
-    console.log('get all');
-    console.log(allTenants[Object.keys(allTenants)[0]]);
-    
-    console.log(typeof allTenants);
-    for (var i = 0; i < allTenants.length; i++) {
-      //console.log(allTenants[i].id);
-      console.log('kakaka');
-    }
-    console.log('end');
-    return allTenants;
-  }); 
 }
 */
