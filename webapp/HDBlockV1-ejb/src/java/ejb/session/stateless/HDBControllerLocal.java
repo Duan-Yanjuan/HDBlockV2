@@ -37,7 +37,7 @@ public interface HDBControllerLocal {
     public HDBRentingPolicyEntity updatePolicy(HDBRentingPolicyEntity editedPolicy);
     public List<PendingHouse> retrieveHouseWithPendingStatus();
     public List<HDBHouseEntity> retrieveAllHouses();
-    public boolean processHouseValidity(PendingHouse house) throws HDBRecordNotFoundException;
+    public boolean processHouseValidity(PendingHouse house, boolean isApproved) throws HDBRecordNotFoundException;
     public HDBHouseOwnerRecordEntity createNewOwner(HDBHouseOwnerRecordEntity newOwner);
 
         

@@ -45,7 +45,9 @@ public class HDBPolicyManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct(){    
         rentingPolicies = hDBControllerLocal.retrieveHDBRentingPolicies();
-        selectedPolicy = rentingPolicies.get(0);
+        if (rentingPolicies.size() > 0) {
+            selectedPolicy = rentingPolicies.get(0);
+        }
     }
     
         /**

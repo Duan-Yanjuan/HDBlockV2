@@ -226,8 +226,8 @@ public class HDBController implements HDBControllerLocal {
         return query.getResultList();
     }
     
-     @Override
-    public boolean processHouseValidity(PendingHouse house) throws HDBRecordNotFoundException{
+    @Override
+    public boolean processHouseValidity(PendingHouse house, boolean isApproved) throws HDBRecordNotFoundException{
         
         /**call composer rest to read the list of house asset whose status is pending. 
         we will obtain the response in json format and we only need to get the DOB and IC and name
@@ -245,7 +245,7 @@ public class HDBController implements HDBControllerLocal {
       
         boolean houseIsValid = checkHouseValidity(houseId,landlordNRIC);     
 
-        if(houseIsValid)
+        if(houseIsValid && isApproved)
         {
             //send the update request to composer res to update the House Status 
             updateHouseAsset(houseId, HOUSE_ASSET_ORG ,"Valid" );

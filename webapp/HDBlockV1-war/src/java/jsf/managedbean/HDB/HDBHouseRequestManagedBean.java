@@ -33,6 +33,7 @@ public class HDBHouseRequestManagedBean implements Serializable {
      */
     
     private List<PendingHouse> houseRequest;
+    private boolean isApproved;
     private PendingHouse selectedHouse;
     private String validityMessage;
   
@@ -73,6 +74,14 @@ public class HDBHouseRequestManagedBean implements Serializable {
     }
 
     /**
+     * @param isApproved whether the selected house will be approved or not
+     */
+    public void setIsApproved(boolean approvalStatus) {
+        System.out.println("************ approvalStatus is" + approvalStatus);
+        this.isApproved = approvalStatus;
+    }
+    
+    /**
      * @param selectedUser the selectedUser to set
      */
     public void setSelectedHouse(PendingHouse selectedHouse) {
@@ -99,7 +108,7 @@ public class HDBHouseRequestManagedBean implements Serializable {
         
         try{
             
-           boolean statusIsApproved = hDBControllerLocal.processHouseValidity(selectedHouse);
+           boolean statusIsApproved = hDBControllerLocal.processHouseValidity(selectedHouse, isApproved);
           
            if(statusIsApproved){
                validityMessage = "Validity has been approved.";

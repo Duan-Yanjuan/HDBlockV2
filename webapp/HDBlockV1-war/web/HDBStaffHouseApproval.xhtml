@@ -38,9 +38,11 @@
 
                 <p:column style="width:32px;text-align: center">
                     <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('requestDialog').show()"  title="Approve">
+                        <f:setPropertyActionListener value="#{true}" target="#{hDBHouseRequestManagedBean.isApproved}" />
                         <f:setPropertyActionListener value="#{houseRequest}" target="#{hDBHouseRequestManagedBean.selectedHouse}" />
                     </p:commandButton>
                     <p:commandButton update=":form" icon="ui-icon-search" oncomplete="PF('requestDialog').show()"  title="Reject">
+                        <f:setPropertyActionListener value="#{false}" target="#{hDBHouseRequestManagedBean.isApproved}" />
                         <f:setPropertyActionListener value="#{houseRequest}" target="#{hDBHouseRequestManagedBean.selectedHouse}" />
                     </p:commandButton>
                 </p:column>
