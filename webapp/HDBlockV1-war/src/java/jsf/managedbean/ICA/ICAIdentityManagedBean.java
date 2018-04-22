@@ -93,11 +93,13 @@ public class ICAIdentityManagedBean implements Serializable {
            if(statusIsApproved){
                
                userStatusIsValid = true;
-               ICAIdentificationRecordEntity identityHolder = iCAControllerLocal.retrieveAllIdentificationById(selectedUser.getIdentificationNo());
-               selectedUser.setIdentityValidityPeriod(df.format(identityHolder.getValidityPeriod()));
-               selectedUser.setPassType(identityHolder.getIdentificationType());
-               
-               
+      
+                identityMessage = "User Identity " + selectedUser.getIdentificationNo() + " Has Been Approved and Endorsed";
+                userRequest = iCAControllerLocal.retrieveUserWithPendingStatus();
+                         System.out.println("*************** userstratus is valid" +  identityMessage);
+               //ICAIdentificationRecordEntity identityHolder = iCAControllerLocal.retrieveAllIdentificationById(selectedUser.getIdentificationNo());
+              // selectedUser.setIdentityValidityPeriod(df.format(identityHolder.getValidityPeriod()));
+              // selectedUser.setPassType(identityHolder.getIdentificationType());            
                //make another call
                //identityMessage = "User Identity " + selectedUser.getIdentificationNo() + " Is VALID and Has Been ENDORSED.";
            }

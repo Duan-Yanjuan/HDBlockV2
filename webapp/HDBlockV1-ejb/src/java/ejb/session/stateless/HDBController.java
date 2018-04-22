@@ -50,7 +50,7 @@ public class HDBController implements HDBControllerLocal {
     private EntityManager em;
 
     
-    private final String COMPOSER_URL = "http://172.25.105.61:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://172.25.107.104:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String HOUSE_ASSET_ORG = "org.acme.hdb.House";
     private final Client CLIENT = ClientBuilder.newClient(); 
      

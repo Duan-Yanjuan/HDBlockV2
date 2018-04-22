@@ -39,6 +39,9 @@ public interface ICAControllerLocal {
 
     public boolean finalProcessUserIdentity(String ic, String userType, String result);
 
+    public boolean revokeIdentity(ICAIdentificationRecordEntity identity);
+
+
 
 
 

@@ -51,7 +51,7 @@ public class ICAController implements ICAControllerLocal {
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
 
-    private final String COMPOSER_URL = "http://172.25.97.56:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://172.25.107.104:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String TENANT_ASSET_ORG = "org.acme.hdb.Tenant";
     private final String LANDLORD_ASSET_ORG = "org.acme.hdb.Landlord";
     private final String TENANT_ASSET_UPDATE_STATUS_ORG = "org.acme.hdb.UpdateTenantStatus";
@@ -120,7 +120,7 @@ public class ICAController implements ICAControllerLocal {
 
     @Override
     public List<ICAIdentificationRecordEntity> retrieveAllIdentification() {
-        Query query = em.createQuery("SELECT ic FROM ICAIdentificationRecordEntity ic");
+        Query query = em.createQuery("SELECT ic FROM ICAIdentificationRecordEntity ic WHERE ic.validityPeriod != null");
         return query.getResultList();
 
     }
@@ -162,7 +162,6 @@ public class ICAController implements ICAControllerLocal {
        
     @Override
     public boolean processUserIdentity(PendingUser user) throws ICRecordNotFoundException {
-
         /**
          * call composer rest to read the list of landlord and tenant asset
          * whose IC status is pending. we will obtain the response in json
@@ -193,12 +192,12 @@ public class ICAController implements ICAControllerLocal {
                 //send the update request to composer res to update the ICStatus       
                 if (userType.equals("Tenant")) {
                     System.out.println("************* TENANT IC IS VALID");
-                  //  updateUserAsset(userType, TENANT_ASSET_UPDATE_STATUS_ORG, "Valid", userIdentitification);
-                  //  hDBlockUserEntityControllerLocal.updateUserIdentity(userIdentitification); //set the identity to true
+                    updateUserAsset(userType, TENANT_ASSET_UPDATE_STATUS_ORG, "Valid", userIdentitification);
+                    hDBlockUserEntityControllerLocal.updateUserIdentity(userIdentitification); //set the identity to true
                 } else if (userType.equals("Landlord")) {
                     System.out.println("************* LANDLORD IC IS VALID");
-                  //  updateUserAsset(userType, LANDLORD_ASSET_UPDATE_STATUS_ORG, "Valid", userIdentitification);
-                  //  hDBlockUserEntityControllerLocal.updateUserIdentity(userIdentitification); ////set the identity to true
+                    updateUserAsset(userType, LANDLORD_ASSET_UPDATE_STATUS_ORG, "Valid", userIdentitification);
+                    hDBlockUserEntityControllerLocal.updateUserIdentity(userIdentitification); ////set the identity to true
                 }
 
                 return true;
@@ -254,6 +253,10 @@ public class ICAController implements ICAControllerLocal {
         return false;
     }
 
+    
+    /*
+        This method make a restful call to composer server to retrieve the list of landlord and tenants asset whose identity status is pending.
+    */
     @Override
     public List<PendingUser> retrieveUserWithPendingStatus() {
 
@@ -371,53 +374,25 @@ public class ICAController implements ICAControllerLocal {
         }
 
     }
-    
-//     private HashMap<Integer, String[]> checkIdentificationValidity(String identificationNumber, String dateOfBirth, String firstName, String lastName) throws ICRecordNotFoundException {
-//      
-//        HashMap<Integer , String[]> userIdentityInformation = new HashMap<>();
-//         
-//        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-//
-//        Query query = em.createQuery("SELECT i FROM ICAIdentificationRecordEntity i WHERE i.nric = :ic");
-//        query.setParameter("ic", identificationNumber);
-//        List<ICAIdentificationRecordEntity> record = query.getResultList();
-//
-//        if (record.isEmpty()) {
-//                       
-//            throw new ICRecordNotFoundException("Non-Existence of Such Identity Number");
-//        } else {
-//            System.out.println("***************** IC STATUS FOUND");
-//            String dateOfBirth_String = df.format(record.get(0).getDateOfBirth());
-//            System.out.println("***************** DOB DATABASE " + dateOfBirth_String + " DOB from BC " + dateOfBirth);
-//            System.out.println("***************** NAME IN DATA BASE " + record.get(0).getFullname() + " Name from BC " + firstName + " " + lastName);
-//            if (record.get(0).getFullname().equals(firstName + " " + lastName) && dateOfBirth_String.equals(dateOfBirth)) //must put and DOB
-//            {
-//          
-//                return null;
-//            } else {
-//                throw new ICRecordNotFoundException("Mismatch of Application Information with His/Her Identity Numebr");
-//            }
-//
-//        }
-//
-//    }
 
-    /* public ICAForeignIdentificationRecordEntity updateIdentification(ICAForeignIdentificationRecordEntity identity){
+    
+    @Override
+    public boolean revokeIdentity(ICAIdentificationRecordEntity identity){
         
-        if(identity.getId() != null)
-        {
-            ICAForeignIdentificationRecordEntity identityToUpdate = retrieveStaffByStaffId(staffEntity.getStaffId());
-            if(staffEntityToUpdate.getUsername().equals(staffEntity.getUsername()))
-            {
-                staffEntityToUpdate.setFirstName(staffEntity.getFirstName());
-                staffEntityToUpdate.setLastName(staffEntity.getLastName());
-                staffEntityToUpdate.setAccessRightEnum(staffEntity.getAccessRightEnum());
-                staffEntityToUpdate.setUsername(staffEntity.getUsername());
-            }
-        }
-        else
-        {
-            throw new StaffNotFoundException("Staff ID not provided for staff to be updated");
-        }
-    }*/
+        String icNo = identity.getNric();
+        Query q = em.createQuery("SELECT ic FROM ICAIdentificationRecordEntity ic WHERE ic.nric =:userIc");
+        q.setParameter("userIc", icNo);
+        
+        ICAIdentificationRecordEntity userIdentity  = (ICAIdentificationRecordEntity) q.getSingleResult();
+        
+        userIdentity.setIsActive(false);
+        em.flush();
+        
+        
+        //call composer restful service start here.
+           
+        
+        return true;
+        
+    }
 }

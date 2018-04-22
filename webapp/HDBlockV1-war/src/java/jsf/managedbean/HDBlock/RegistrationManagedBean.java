@@ -7,13 +7,13 @@ package jsf.managedbean.HDBlock;
 
 import ejb.session.stateless.HDBlockUserEntityControllerLocal;
 import entity.HDBlockUserEntity;
-import javafx.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import util.exception.CreateNewUserException;
 
 /**
  *
@@ -49,13 +49,16 @@ public class RegistrationManagedBean {
      * @param newUsers the newUsers to set
      */
     public void setNewUsers(HDBlockUserEntity newUsers) {
+        System.out.println("*********************** NEW USER REGISTERED  DOB " + newUsers.getDateOfBirth());
         this.newUsers = newUsers;
     }
     
     public void registerAccount(){
         
         try{
-          
+            // SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+       
+            System.out.println("*********************** NEW USER REGISTERED  DOB " + newUsers.getDateOfBirth());
             hDBlockUserEntityControllerLocal.registerAccount(newUsers);
             newUsers = new HDBlockUserEntity();
             
@@ -63,7 +66,7 @@ public class RegistrationManagedBean {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Thank You for Registering With Us. We will email you, once the account is approved.", null));
       
         }
-        catch(CreateNewUserException ex){
+        catch(Exception ex){
              
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, ex.getMessage(), null));
       

@@ -57,7 +57,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
 
     @PersistenceContext(unitName = "HDBlockV1-ejbPU")
     private EntityManager em;
-    private final String COMPOSER_URL = "http://172.25.97.56:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
+    private final String COMPOSER_URL = "http://172.25.107.104:3000/api"; // PLEASE AMEND TO YOUR OWN URL.
     private final String TENANT_ASSET_ORG = "org.acme.hdb.RegisterAsTenant";
     private final String LANDLORD_ASSET_ORG = "org.acme.hdb.RegisterAsLandlord";
     private final String CREATE_TENANCY_AGREEMENT_ASSET_ORG = "org.acme.hdb.CreateTenancyAgreement";
@@ -98,7 +98,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                Date tenantDob = newUser.getDateOfBirth();
                String tenantDob_String = df.format(tenantDob);
                System.out.println("********************** tenant dob " + tenantDob_String);
-               TenantAsset tenant = new TenantAsset(TENANT_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending" , "21-04-1992" );
+               TenantAsset tenant = new TenantAsset(TENANT_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending" , tenantDob_String );
                registerUserResponse = myResource.request().post(Entity.json(tenant));
                responseStatus = registerUserResponse.getStatus();
                System.out.println("*********** REGISTER TENANT RESPONSE IS " + responseStatus);
@@ -127,7 +127,7 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
                        System.out.println("********************** Lanldord dob " + newUser.getLastName());
                          System.out.println("********************** Lanldord dob " + landlordDob_String);
                
-               LandlordAsset landlord = new LandlordAsset(LANDLORD_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending" , "10-09-1980");
+               LandlordAsset landlord = new LandlordAsset(LANDLORD_ASSET_ORG, newUser.getIdentificationNo() , newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), "Pending" , landlordDob_String);
                registerUserResponse = myResource.request().post(Entity.json(landlord));
                responseStatus = registerUserResponse.getStatus();
                System.out.println("*********** REGISTER Landlord RESPONSE IS " + responseStatus );
@@ -239,9 +239,11 @@ public class HDBlockUserEntityController implements HDBlockUserEntityControllerL
             HDBlockUserEntity user = retrieveUserByEmail(email);
             String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + user.getSalt()));
 
-            if (user.getPassword().equals(passwordHash)) {
+            if (user.getPassword().equals(passwordHash) && user.isStatusIsValid()) {
                 return user;
-            } else {
+            } else if(user.getPassword().equals(passwordHash) && !user.isStatusIsValid()) {
+                throw new InvalidLoginCredentialException("Account has not been activated!");
+            }else {
                 throw new InvalidLoginCredentialException("email does not exist or invalid password!");
             }
         } catch (UserNotFoundException ex) {
