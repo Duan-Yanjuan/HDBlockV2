@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/ICAMasterPage.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+           <h:form id="form">
+
+            <p:growl id="msgs" showDetail="true" />
+            <p:dataTable id="identityTable" var="identityRecord" value="#{iCAForeignIdentityManagedBean.records}">
+                <f:facet name="header">
+                    <h1> Foreign Identity Record </h1>
+                </f:facet>
+                <p:column headerText="NRIC" style="width:80px;">
+                    <h:outputText value="#{identityRecord.nric}" />
+                </p:column>
+                <p:column headerText="Full Name" style="width:100px;">
+                    <h:outputText value="#{identityRecord.fullname}" />
+                </p:column>
+                <p:column headerText="Date of Birth" style="width:80px;">
+                    <h:outputText value="#{identityRecord.dateOfBirth}" />
+                </p:column>
+                <p:column headerText="Issued Date" style="width:100px;"> 
+                    <h:outputText value="#{identityRecord.issuedDate}" />
+                </p:column>
+                
+                   <p:column headerText="Valid Until" style="width:100px;">
+                       <h:outputText value="#{identityRecord.validityPeriod}" />
+                </p:column>
+                
+   
+                      <p:column headerText="Identification Type" style="width:120px;">
+                          <h:outputText value="#{identityRecord.identificationType}" />
+                </p:column>
+                
+                <p:column headerText="Action" style="width:45px;text-align: center;">
+                    <p:commandButton value="revoke" update="form"  oncomplete="PF('requestDialog').show()"  title="View">
+                        <f:setPropertyActionListener value="#{identityRecord}" target="#{iCAForeignIdentityManagedBean.selectedRecord}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:dialog header="Identity Info" appendTo="@(body)"  widgetVar="requestDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="350px" >
+                
+                 <h:outputText  style="font-size:medium;"  value="Are You Sure You Want to Revoke This Identity?" />
+                 <br/>
+                 <br/>
+
+                 <p:commandButton value="Yes" process="@this" update=":form:identityTable" action="#{iCAForeignIdentityManagedBean.revokeIdentity}"  oncomplete="PF('requestDialog').hide()" />
+                 &nbsp;
+                 <p:commandButton process="@this" value="No" oncomplete="PF('requestDialog').hide()" />
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

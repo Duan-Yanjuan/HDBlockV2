@@ -140,7 +140,7 @@ public class TenancyAgreementManagedBean implements Serializable {
         }
         System.out.println("********** RENTAL DATE " + rentalDate);
         String tenancyId = landlordHouseInformation.getPostalCode() + landlordHouseInformation.getUnitNumber().substring(1) + todayDateFormated[0] + todayDateFormated[1] + todayDateFormated[2];
-        String houseId = landlordHouseInformation.getPostalCode() + landlordHouseInformation.getUnitNumber().substring(1);
+        String houseId = landlordHouseInformation.getPostalCode() + "_" +  landlordHouseInformation.getUnitNumber().substring(1);
         System.out.println("Tenancy ID " + tenancyId);
         System.out.println("********** SUBMIT" + tenants.size() + taAsset.getRentalFee());
         boolean createResult = hDBlockUserEntityControllerLocal.createNewTenancyAgreement(rentalDate, taAsset.getDuration(), taAsset.getSecurityDeposit(), taAsset.getAdvanceRentalFee(), taAsset.getRentalFee(), tenantsId, tenancyId , houseId);

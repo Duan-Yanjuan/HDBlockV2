@@ -148,7 +148,9 @@
 
 
                                             <h:outputText value="Tenant Status " style="font-weight: bold" />
-                                            <h:outputText value="#{tenant.tenantStatus}"/>
+                                            
+                                            <h:outputText rendered="#{tenant.tenantStatus}" value="Valid"/>
+                                            <h:outputText rendered="#{!tenant.tenantStatus}" value="Invalid"/>
 
                                         </h:panelGrid>
                                     </p:outputPanel>
